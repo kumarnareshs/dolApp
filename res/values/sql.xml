@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="fingerprint">
+CREATE TABLE "fingerprint" (
+"_id"  INTEGER NOT NULL,
+"serverid"  INTEGER,
+"title"  TEXT(50) NOT NULL,
+"path"  INTEGER NOT NULL,
+"filename"  TEXT(50) NOT NULL,
+"fingerprint"  BLOB NOT NULL
+)</string>    
+
+<string name="mymodel">
+CREATE TABLE "mymodel" (
+  _id                                    integer PRIMARY KEY AUTOINCREMENT,
+   id                                     integer,
+  modelname                               varchar ,
+  isavailable                                   boolean  ,
+  luckynumber                                  integer,
+  geopoint                               varchar,
+  "date"                                 date 
+)
+</string>   
+
+</resources><!-- 
+	String name;
+	boolean isavailable;
+	int luckynumber;
+	String geopoint;
+	Date date; -->

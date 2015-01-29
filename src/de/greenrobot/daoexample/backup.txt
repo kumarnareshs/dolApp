@@ -1,0 +1,13 @@
+public class Fingerprint extends Model implements Constants{
+
+	@Override
+	public Map<String, ? extends Object> toMap() {
+		// TODO Auto-generated method stub
+		SharedPreferences prefs = MyApplication.getContext().getSharedPreferences(
+			      MyPREFERENCES, Context.MODE_PRIVATE);
+			// use a default value using new Date()
+		//Handle the default value- fetch userId--TODO
+			String id = prefs.getString(ANDROIDID, "");
+		put(ANDROIDID, id);
+		return super.toMap();
+	}

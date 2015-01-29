@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/listItem"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content" 
+  android:orientation="horizontal" 
+  android:paddingLeft="10px" 
+  android:paddingRight="10px" 
+  android:paddingTop="5px" 
+  android:paddingBottom="5px">
+
+
+    <TextView  
+    android:id="@+id/filename" 
+    android:layout_height="wrap_content" 
+    android:singleLine="false"
+    android:gravity="left"
+    android:textSize="18sp" android:layout_width="260px">
+    </TextView>
+
+
+    <TextView  
+    android:id="@+id/path" 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:textSize="15sp" android:paddingLeft="10px">
+    </TextView>         
+
+</LinearLayout>

@@ -1,0 +1,111 @@
+package com.fileupload;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.example.pro.R;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+public class TestRest extends Activity implements OnClickListener {
+
+	protected static final String TAG = null;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.upload);
+		Button submit = (Button) findViewById(R.id.submit);
+		Button post = (Button) findViewById(R.id.post);
+		Button get = (Button) findViewById(R.id.get);
+
+		TextView gettext=(TextView)findViewById(R.id.gettext);
+		submit.setOnClickListener(this);
+		post.setOnClickListener(this);
+		get.setOnClickListener(this);
+	}
+	protected void makePost() throws UnsupportedEncodingException {
+	    AsyncHttpClient client = new AsyncHttpClient();
+	    Context context = this.getApplicationContext();
+	    String  url = "http://10.0.0.6:3000/api/Customers/login";
+	    String  xml = "{\"email\":\"test@nareshkumar.me\",\"password\":\"123\"}";
+	    HttpEntity entity= null;
+	   
+	    Header[] headers = {
+                new BasicHeader("Accept", "application/json"),
+        };
+	    String  contentType = "application/json";
+
+	    Log.d("HTTP", "Post...");
+	    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	    nameValuePairs.add(new BasicNameValuePair("email", "test@nareshkumar.me"));
+	    nameValuePairs.add(new BasicNameValuePair("password", "123")); 
+
+	    UrlEncodedFormEntity urlencoded=new UrlEncodedFormEntity(nameValuePairs);
+	    
+	    client.post( context, url,headers, urlencoded, contentType, new AsyncHttpResponseHandler() {
+	       
+			@Override
+			public void onFailure(int arg0, Header[] arg1, byte[] arg2,
+					Throwable arg3) {
+				// TODO Auto-generated method stub
+			
+				
+			}
+			@Override
+			public void onSuccess(int arg0, Header[] arg1, byte[] body) {
+				// TODO Auto-generated method stub
+				 String response = null;
+				try {
+					response = body == null ? null : new String(body, getCharset());
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	                if (Log.isLoggable(TAG, Log.DEBUG))
+	                    Log.d(TAG, "Success (string): " + response);
+	                
+			}
+	    });
+	}
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+				switch(v.getId()){
+				case R.id.submit:try {
+						makePost();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}break;
+				case R.id.post: postARequest(); break;
+				case R.id.get: 
+					break;
+				}
+	}
+	private void postARequest() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
