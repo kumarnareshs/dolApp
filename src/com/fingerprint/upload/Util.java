@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.database.Constants;
+import com.fileupload.MyApplication;
 import com.strongloop.android.loopback.Model;
 
 import de.greenrobot.daoexample.Fingerprint;
 
-public class Util<T extends Model> {
+public class Util<T extends Model> implements Constants {
     
    private Context _context;
     
@@ -56,5 +59,12 @@ public class Util<T extends Model> {
 		return result;
 	}
    
-   
+   public static String getAndroidId(){
+	   SharedPreferences prefs = MyApplication.getContext().getSharedPreferences(
+			      MyPREFERENCES, Context.MODE_PRIVATE);
+			// use a default value using new Date()
+		//Handle the default value- fetch userId--TODO
+			String id = prefs.getString(ANDROIDID, "");
+			return id;
+   }
 }

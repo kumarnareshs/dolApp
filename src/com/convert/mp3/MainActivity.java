@@ -64,6 +64,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 			tv.setText("Failed"+ExceptionMsg);
 		}
+
+		@Override
+		public void onCompletedSuccess(String fingerPrint, Double length) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 	private TextView tv;
 }

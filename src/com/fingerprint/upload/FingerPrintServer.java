@@ -28,7 +28,6 @@ import com.database.Constants;
 import com.fileupload.Customer;
 import com.fileupload.CustomerRepository;
 import com.fileupload.MyApplication;
-import com.loopj.android.http.RequestParams;
 import com.strongloop.android.loopback.AccessToken;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
@@ -123,8 +122,7 @@ public class FingerPrintServer implements Constants{
 				HttpClient httpClient = new DefaultHttpClient();
 				HttpPost request = new HttpPost(url);
 				
-				RequestParams p = new RequestParams();
-			    p.put("code",code);
+				
 			    String contentType =
                 		"application/x-www-form-urlencoded;";
 			   Header[] headers = {

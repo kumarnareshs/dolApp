@@ -1,4 +1,4 @@
-package com.fingerprint.upload;
+package com.fingerprint.service.server;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.fileupload.MyApplication;
+import com.fingerprint.upload.DB;
+import com.fingerprint.upload.Util;
 import com.strongloop.android.loopback.ModelRepository;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;

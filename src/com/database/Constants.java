@@ -8,7 +8,7 @@ import android.os.Environment;
 
 public interface Constants {
 
-	public static final String HOST ="http://192.168.228.50";
+	public static final String HOST ="http://192.168.77.52";
 	public static final String PORT ="3000";
 	public static final String DATABASE_NAME = "music.db";
 	public static final int DATABASE_VERSION = 4;

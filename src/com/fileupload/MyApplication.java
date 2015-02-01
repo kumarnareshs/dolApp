@@ -48,8 +48,12 @@ private static final String TAG = "com.fileupload.MyApplication";
         sharedpreferences.edit().putString(ANDROIDID, android_id).apply();
     }
 
-    public static Context getContext() {
-        return mContext;
-    }
    
+    public static Context getContext() {
+    	return mContext;
+    }
+    
+
+   
+
 }

@@ -63,18 +63,22 @@ public class FingerPrintGenerator implements Constants {
 				if(tempfile.exists()){
 					tempfile.delete();
 				}
-				fpl.onCompletedSuccess(fingerprint);
-				
+				if (isFullLength == true) {
+					fpl.onCompletedSuccess(fingerprint, songlength);
+				} else {
+					fpl.onCompletedSuccess(fingerprint);
+				}
 			} catch (Exception e) {
 				fpl.onCompletedFailure(e.getMessage());
 				e.printStackTrace();
 			}
 		}
 	};
+	private Double songlength;
 
 	public interface FingerPrintListener {
 		public void onCompletedSuccess(String fingerPrint);
-
+		public void onCompletedSuccess(String fingerPrint,Double length);
 		public void onCompletedFailure(String ExceptionMsg);
 	}
 
@@ -86,9 +90,11 @@ public class FingerPrintGenerator implements Constants {
 		FfmpegController ffc = new FfmpegController(context, TEMP_DIR);
 		if(isFullLength== true){
 			c.duration=SoundUtility.getDurationOfSound(context, fileToConvert.getCanonicalPath());
+			
 		}else{
 			c.duration=duration;
 		}
+		songlength = c.duration;
 		c.startTime=startTime;
 		ffc.convertToWaveAudio(c, new File(TEMP_DIR,Temp_WavFile).getCanonicalPath(), Wavfrequency, noOfChannels,sc);	
 		} catch (Exception e) {

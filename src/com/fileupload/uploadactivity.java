@@ -1,12 +1,13 @@
 package com.fileupload;
 
 import java.util.ArrayList;
-
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
-import android.app.Application;
+
 import android.app.Activity;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +21,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fingerprint.upload.R;
-import com.google.common.collect.ImmutableMap;
 import com.strongloop.android.loopback.AccessToken;
 import com.strongloop.android.loopback.Model;
 import com.strongloop.android.loopback.ModelRepository;
@@ -32,8 +32,8 @@ import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 import de.greenrobot.daoexample.DaoMaster;
 import de.greenrobot.daoexample.DaoSession;
-import de.greenrobot.daoexample.SDcardOpenHelper;
 import de.greenrobot.daoexample.FingerprintDao;
+import de.greenrobot.daoexample.SDcardOpenHelper;
 
 public class uploadactivity extends Activity {
 
@@ -306,9 +306,8 @@ public class uploadactivity extends Activity {
 
 		String filter = "{\"name\": {\"like\": \"%and%\"}}";
 		String filter2 = "{\"where\": {\"and\": [{\"isavailable\": true}, {\"list\": [1,2]}]}}";
-
-		final MyModel mymodel= mymodelrepository.createObject(ImmutableMap.of("name",
-				"mymodel1"));
+		Map<String,String> param = new HashMap<String,String>();
+		final MyModel mymodel= mymodelrepository.createObject(param);
 		mymodel.setDate(new Date());
 		mymodel.setGeopoint("123,123");
 		mymodel.setIsavailable(true);
@@ -334,9 +333,8 @@ public class uploadactivity extends Activity {
 	}
 
 	private void InsertServerRecord() {
-
-		final MyModel mymodel= mymodelrepository.createObject(ImmutableMap.of("name",
-				"mymodel1"));
+		Map<String,String> param = new HashMap<String,String>(); 
+		final MyModel mymodel= mymodelrepository.createObject(param);
 		mymodel.setDate(new Date());
 		mymodel.setGeopoint("13,13");
 		mymodel.setIsavailable(true);

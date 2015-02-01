@@ -26,7 +26,7 @@ public class DB implements Constants{
 		db = sdhelper.open();
 	}
 	
-	DB(SQLiteDatabase db){
+	public DB(SQLiteDatabase db){
 		this.db =db;
 	}
 	

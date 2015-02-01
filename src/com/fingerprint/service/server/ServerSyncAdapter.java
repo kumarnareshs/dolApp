@@ -1,4 +1,4 @@
-package com.fingerprint.upload;
+package com.fingerprint.service.server;
 
 import java.util.List;
 
@@ -7,8 +7,10 @@ import android.app.Application;
 
 public class ServerSyncAdapter extends  ServerSync{
 
+	private Application app;
 	public ServerSyncAdapter(Application app) {
 		super(app);
+		this.app=app;
 		syncAllTables();
 	}
 	private void syncAllTables() {
@@ -39,5 +41,12 @@ public class ServerSyncAdapter extends  ServerSync{
 	public String sendToFPServer(String fingerPrint) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	 
+	public void sendFullFingerPrint(Long rowId, String fingerPrint,
+			Double length) {
+		 FingerPrintUpload fpu = new FingerPrintUpload(app);
+		 fpu.sendFullFingerPrint(rowId, fingerPrint, length);
 	}
 }
