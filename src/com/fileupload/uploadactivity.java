@@ -33,7 +33,6 @@ import com.strongloop.android.loopback.callbacks.VoidCallback;
 import de.greenrobot.daoexample.DaoMaster;
 import de.greenrobot.daoexample.DaoSession;
 import de.greenrobot.daoexample.FingerprintDao;
-import de.greenrobot.daoexample.SDcardOpenHelper;
 
 public class uploadactivity extends Activity {
 
@@ -64,8 +63,6 @@ public class uploadactivity extends Activity {
 		mymodelrepository = restAdapter.createRepository(MyModelRepository.class);
 		createListView();
 		listener();
-		SDcardOpenHelper sdhelper = new SDcardOpenHelper();
-		db = sdhelper.open();
 		daoMaster = new DaoMaster(db);
 		daoSession = daoMaster.newSession();
 	}

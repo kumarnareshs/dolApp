@@ -13,10 +13,8 @@ import org.ffmpeg.android.FfmpegController;
 import org.ffmpeg.android.ShellUtils.ShellCallback;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
-import com.convert.mp3.FingerPrintGenerator.FingerPrintListener;
 import com.database.Constants;
 import com.fingerprint.upload.SoundUtility;
 

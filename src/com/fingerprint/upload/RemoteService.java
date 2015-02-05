@@ -1,9 +1,6 @@
 package com.fingerprint.upload;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,77 +13,73 @@ import org.json.JSONObject;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.convert.mp3.FingerPrintGenerator;
-import com.convert.mp3.FingerPrintGenerator.FingerPrintListener;
 import com.database.Constants;
 import com.fileupload.MyApplication;
-import com.fileupload.TestServerSyncAdapter;
-import com.fingerprint.service.task.FingerPrintTask;
-import com.fingerprint.service.task.FingerprintTaskListener;
+import com.fingerprint.database.DBAdapter;
+import com.fingerprint.service.task.FullFingerPrintTask;
+import com.fingerprint.service.task.IInitialFingerPrintTaskListener;
+import com.fingerprint.service.task.InitialFingerPrintTask;
 import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.remoting.JsonUtil;
 import com.strongloop.android.remoting.adapters.Adapter;
 
-import de.greenrobot.daoexample.DaoMaster;
-import de.greenrobot.daoexample.DaoSession;
+import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daoexample.FingerPrintRepository;
 import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao;
 import de.greenrobot.daoexample.FingerprintDao.Properties;
-import de.greenrobot.daoexample.SDcardOpenHelper;
+import de.greenrobot.daoexample.Metadata;
+import de.greenrobot.daoexample.MetadataRepository;
 
 public class RemoteService extends Service implements Constants {
 	
 	
 	private Handler serviceHandler;
 	private Handler trackIdHandler;
-	private Handler fpHandler;
+	private Handler initialfpHandler;
 	private Handler generateFullFPHandler;
-	private Task myTask = new Task();
-	private TrackIdWorker trackidworker = new TrackIdWorker();
-	private FingerPrintWorker fpTask = new FingerPrintWorker();
-	private List<Long> listOfSongsToFingerPrintFully;
-	private DaoSession daoSession;
-	private DaoMaster daoMaster;
-	private SQLiteDatabase db;
-	private Util util;
+	private Handler MetaDataHandler;
+	private BackgroundFPWorker bgFPWorker = new BackgroundFPWorker();
+	private NoMatchFoundWorker nomatchfoundworker = new NoMatchFoundWorker();
+	private InitialFingerPrintWorker initialFPTask = new InitialFingerPrintWorker();
+	private FullFingerPrintWorker fullfpworker = new FullFingerPrintWorker();
 	private static int songCounter=0;
 	private static int NoOffingerprintOperationDone=0;
 	private static int NoOfDatabaseOperationDone=0;
 	private static int NoOfSongProcessed=0;
-	private SDcardOpenHelper sdhelper;
 	private MyApplication app;
 	private RestAdapter restAdapter;
 	private FingerPrintRepository fingerPrintRepo;
 	private static Map<String,String> statusmap;
-	private List<Song> listToFingerprint;
+	private List<Song> listToFingerprint = new ArrayList<Song> ();
+	private Map<Long,String> mapToFullFingerprint= new HashMap<Long,String>();
 	private String currentFingerPrintingSong;
+	private DBAdapter dbadapter;
+	private FingerprintDao fingerprintdao;
 	@SuppressWarnings("unused")
 	private static final String TAG = "com.fingerprint.upload.RemoteService";
 	
 	@Override
-	public IBinder onBind(Intent arg0) { 
-		serviceHandler = new Handler();
-		fpHandler= new Handler();
-		trackIdHandler = new Handler();
-		serviceHandler.postDelayed(myTask, 1000L);
-		trackIdHandler.postDelayed(trackidworker, 1000L);
-		
-		statusmap= new HashMap<String,String>();
-		util = new Util(getApplicationContext());
-		sdhelper = new SDcardOpenHelper();
-		db = sdhelper.open();
-		daoMaster = new DaoMaster(db);
-		daoSession = daoMaster.newSession();
+	public IBinder onBind(Intent i) {
+
+		Log.d(getClass().getSimpleName(), "onBind()");
+		String jobType = i.getStringExtra(JOB_TYPE);
+		dbadapter = DBAdapter.getInstance(getApplication());
+		statusmap = new HashMap<String, String>();
 		app = (MyApplication) this.getApplication();
 		restAdapter = app.getLoopBackAdapter();
+		fingerprintdao = dbadapter.getNewDaoSession().getFingerprintDao();
 		fingerPrintRepo = restAdapter.createRepository(FingerPrintRepository.class);
-		Log.d(getClass().getSimpleName(), "onBind()");
+		metaDataRepo = restAdapter.createRepository(MetadataRepository.class);
+		if (jobType == BACKGROUND_FINGERPRINT_JOB) {
+			serviceHandler = new Handler();
+			serviceHandler.postDelayed(bgFPWorker, 1000L);
+		}
 		return remoteServiceStub;
 	}
 
@@ -100,27 +93,24 @@ public class RemoteService extends Service implements Constants {
 			// TODO Auto-generated method stub
 			return statusmap;
 		}
-
 	};
-
-	 
+	private MetadataRepository metaDataRepo;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.d(getClass().getSimpleName(),"onCreate()");
-		
 	}
 	@Override
 	public void onDestroy() {
 		/* TODO: service is not destroying */
 		if (serviceHandler != null) {
-			serviceHandler.removeCallbacks(myTask);
+			serviceHandler.removeCallbacks(bgFPWorker);
 		}
 		statusmap=null;
 		serviceHandler = null;
-		fpHandler.removeCallbacks(fpTask);
-		fpHandler=null;
+		initialfpHandler.removeCallbacks(initialFPTask);
+		initialfpHandler=null;
 		stopSelf();
 		Log.d(getClass().getSimpleName(),"onDestroy() service");
 		super.onDestroy();
@@ -131,48 +121,31 @@ public class RemoteService extends Service implements Constants {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 	
 		Log.d(getClass().getSimpleName(), "onStart()"); 
-			
 		return START_NOT_STICKY;
 	}
 	
-	class TrackIdWorker implements Runnable{
+	class NoMatchFoundWorker implements Runnable{
 		
 		@Override
 		public void run() {
 			//android.os.Debug.waitForDebugger();
-			 restAdapter.createRepository(FingerPrintRepository.class);
+			
 			 fingerPrintRepo.invokeStaticMethod("getnomatchfoundsongs", null, new Adapter.Callback() {
 				@Override
 				public void onSuccess(String response) {
 					Log.i(TAG, "getnomatchfoundsongs"+response);
-					trackIdHandler.postDelayed(trackidworker, 3000L);
 					JSONObject jObject;
 					try {
 						jObject = new JSONObject(response);
 						String cids = jObject.getString("cids");
-						listOfSongsToFingerPrintFully = Util.ConvertStringToList(cids);
-						updateSongNotAvailableStatus(listOfSongsToFingerPrintFully);
+                        List<Long> listOfnomatchFoundSongs = Util.ConvertStringToList(cids);
+						dbadapter.setFingerprintStatus(listOfnomatchFoundSongs,FP_STATUS_NOMATCHFOUND);
+						
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				}
 				
-				private void updateSongNotAvailableStatus(
-						List<Long> listOfSongsToFingerPrintFully) {
-					FingerprintDao fdao= daoSession.getFingerprintDao();
-					List<Fingerprint> fplist = new ArrayList<>();
-					for(Long l:listOfSongsToFingerPrintFully){
-						Fingerprint fp = new Fingerprint();
-						fp.setId(l);
-						fp.setIsSongAvailableInServer(false);
-						fplist.add(fp);
-					}
-					List<String> column = new ArrayList<>();
-					column.add(Properties.IsSongAvailableInServer.columnName);
-					fdao.updateColumnInTx(fplist, column);
-					
-				}
-
 				@Override
 				public void onError(Throwable t) {
 				android.os.Debug.waitForDebugger();
@@ -180,90 +153,222 @@ public class RemoteService extends Service implements Constants {
 				}
 			});
 		}
+	}
+	
+
+	class TrackIdWorker implements Runnable{
+		@Override
+		public void run() {
+			//build not included
+			QueryBuilder qb = fingerprintdao.queryBuilder();
+			qb.where(Properties.Isuploaded.eq(Boolean.TRUE),Properties.Status.eq(FP_STATUS_FPGENERATED));
+			List<Fingerprint> modellist = qb.list();
+			String requestParam ="[";
+			for (Fingerprint fingerprint : modellist) {
+				requestParam = fingerprint.getId().toString()+",";
+			}
+			requestParam = requestParam.substring(0, requestParam.length()-1) +"]";
+			 Map<String,String> param = new  HashMap<String,String>();
+			 param.put("ids", requestParam);
+			 fingerPrintRepo.invokeStaticMethod("getTrackIds", param, new Adapter.Callback() {
+				@Override
+				public void onSuccess(String response) {
+					//[{"rowid":"","trackid":""}]
+					Log.i(TAG, "getnomatchfoundsongs"+response);
+					JSONArray responceArray;
+					try {
+						responceArray = new JSONArray(response);
+						for (int i = 0; i < responceArray.length(); i++) {
+							JSONObject obj = responceArray.getJSONObject(i);
+							Long cid=Long.parseLong(obj.get(Properties.Cid.columnName).toString());
+							Integer trackid=Integer.parseInt(obj.get(Properties.Trackid.columnName).toString());
+							Fingerprint fp = new Fingerprint();
+							fp.setId(cid);
+							fp.setTrackid(trackid);
+							fp.setStatus(FP_STATUS_TRACKID_RECEIVED);
+							List<String> fields = new ArrayList<String>();
+							fields.add(Properties.Trackid.columnName);
+							fingerprintdao.updateColumn(fp, fields);
+							fingerprintdao.refresh(fp);
+						}
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				@Override
+				public void onError(Throwable t) {
+				android.os.Debug.waitForDebugger();
+					Log.e(TAG, "getnomatchfoundsongs"+t);
+				}
+			});
+		}
+	}
+	
+	class MetaDataWorker implements Runnable{
+
+		@Override
+		public void run() {
+			// get all the status for
+			QueryBuilder qb = fingerprintdao.queryBuilder();
+			qb.where(Properties.Status.eq(FP_STATUS_TRACKID_RECEIVED));
+			final List<Fingerprint> modellist = qb.list();
+			String requestParam ="[";
+			for (Fingerprint fingerprint : modellist) {
+				requestParam = fingerprint.getId().toString()+",";
+			}
+			requestParam = requestParam.substring(0, requestParam.length()-1) +"]";
+			 Map<String,String> param = new  HashMap<String,String>();
+			 param.put("ids", requestParam);
+			 
+			 fingerPrintRepo.invokeStaticMethod("getmetadata", null, new Adapter.Callback() {
+					@Override
+						public void onSuccess(String response) {
+							JSONArray responcearray = null;
+							try {
+								responcearray = new JSONArray(response);
+							} catch (JSONException e1) {
+								e1.printStackTrace();
+							}
+
+							List<Metadata> list = new ArrayList<Metadata>();
+							if (response != null) {
+								for (int i = 0; i < response.length(); i++) {
+									list.add(metaDataRepo.createObject(JsonUtil
+											.fromJson(responcearray
+													.optJSONObject(i))));
+								}
+							}
+							for (Metadata metadata : list) {
+								dbadapter.getGlobalDaoSession()
+										.insert(metadata);
+							}
+
+							for (Fingerprint fingerprint : modellist) {
+
+							}
+
+							List<String> fields = new ArrayList<String>();
+							fields.add(Properties.Trackid.columnName);
+							fingerprintdao.updateColumnInTx(modellist, fields);
+							fingerprintdao.refresh(modellist);
+
+							Log.i(TAG, "getnomatchfoundsongs" + response);
+						}
+
+						@Override
+						public void onError(Throwable t) {
+							android.os.Debug.waitForDebugger();
+							Log.e(TAG, "getnomatchfoundsongs" + t);
+					}
+				});
+			
+		}
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	class Task implements Runnable {
+	class BackgroundFPWorker implements Runnable {
 
 		public void run() {
 			SongLoader as = new SongLoader();
 			List<Song> allsonglist = as.loadInBackground(getApplicationContext());
 			statusmap.put(ALLSONGLIST2, allsonglist.size()+"");
 			Log.i(TAG, "::run:" + "all song list "+allsonglist.size());
-			Map<Long,String> listofSongPathInLocalDb =new DB(db).getListOfSongsPathInLocalDb();
+			Map<Long,String> listofSongPathInLocalDb =dbadapter.getListOfSongsPathInLocalDb();
 			statusmap.put(LISTOF_SONG_PATH_IN_LOCAL_DB, listofSongPathInLocalDb.size()+"");
 			Log.i(TAG, "::run:" + "list of songs in local Db"+listofSongPathInLocalDb.size());
 			listToFingerprint = getListOfSongsToFingerPrint(allsonglist,listofSongPathInLocalDb);
 			Log.i(TAG, "::run:" + "list to fingerprint"+listToFingerprint.size());
 			statusmap.put(LIST_TO_FINGERPRINT, listToFingerprint.size()+"");
-			fpHandler.postDelayed(fpTask, 1000L);
+			initialfpHandler= new Handler();
+			initialfpHandler.postDelayed(initialFPTask, 1000L);
 			if(allsonglist.size()<listofSongPathInLocalDb.size()){
-				deleteSongsInLocalDb(allsonglist,listofSongPathInLocalDb);
+				List<Long> songlisttodelete=getListOfSongsToDelete(allsonglist,listofSongPathInLocalDb);
+				if(dbadapter.deleteSongsInLocalDb(songlisttodelete)){
+					Log.i(TAG, "Deleted "+songlisttodelete.size()+" Songs in DB");
+				};
 			}
-			 
-		}
-
-		
-		private void deleteSongsInLocalDb(List<Song> allsonglist,
-				Map<Long, String> listofSongPathInLocalDb) {
-			List<Long> songlisttodelete=getListOfSongsToDelete(allsonglist,listofSongPathInLocalDb);
-			if(new DB(db).deleteSongsInLocalDb(songlisttodelete)){
-				Log.i(TAG, "Deleted "+songlisttodelete.size()+" Songs in DB");
-			};
-			
-		}
-
-		 
+		} 
 	}
 
 	
-	class FingerPrintWorker implements Runnable{
+	class FullFingerPrintWorker implements Runnable{
 
 		@Override
 		public void run() {
+			QueryBuilder qb = fingerprintdao.queryBuilder();
+			qb.where(Properties.Status.eq(FP_STATUS_NOMATCHFOUND));
+			final List<Fingerprint> modellist = qb.list();
+			for (Fingerprint fingerprint : modellist) {
+				mapToFullFingerprint.put(fingerprint.getId(), fingerprint.getFilepath());
+			}
+			 Map<String,String> param = new  HashMap<String,String>();
+			 param.put("ids", requestParam);
+			 
+		
+		}
+	}
+
+	class FullFingerPrintSubWorker implements Runnable{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
 			if (listToFingerprint.size()>songCounter) {
 				songCounter++;
-				FingerPrintTask fptask = new FingerPrintTask(getApplication(), getApplicationContext(),new FingerprintTaskListener() {
+				FullFingerPrintTask fptask = new FullFingerPrintTask(getApplication(), getApplicationContext(),dbadapter,new IInitialFingerPrintTaskListener() {
 					
 					@Override
 					public void onFailure() {
 						// TODO Auto-generated method stub
-						fpHandler.postDelayed(fpTask, 1000L);
+						initialfpHandler.postDelayed(initialFPTask, 1000L);
 					}
 					
 					@Override
 					public void onComplete() {
 						// TODO Auto-generated method stub
-						fpHandler.postDelayed(fpTask, 1000L);
+						initialfpHandler.postDelayed(initialFPTask, 1000L);
 					}
 				});
 				fptask.fingerprintMusic(listToFingerprint.get(songCounter));
 			}else{
-				TestServerSyncAdapter sync = new TestServerSyncAdapter(getApplication());
-				sync.startSync(FingerprintDao.TABLENAME);
+				 
 			}
 		}
 		
 	}
+	class InitialFingerPrintWorker  implements Runnable{
 
+		@Override
+		public void run() {
+			if (listToFingerprint.size()>songCounter) {
+				songCounter++;
+				InitialFingerPrintTask fptask = new InitialFingerPrintTask(getApplication(), getApplicationContext(),new IInitialFingerPrintTaskListener() {
+					
+					@Override
+					public void onFailure() {
+						// TODO Auto-generated method stub
+						initialfpHandler.postDelayed(initialFPTask, 1000L);
+					}
+					
+					@Override
+					public void onComplete() {
+						// TODO Auto-generated method stub
+						initialfpHandler.postDelayed(initialFPTask, 1000L);
+					}
+				});
+				fptask.fingerprintMusic(listToFingerprint.get(songCounter));
+			}else{
+				 
+			}
+		}
+	}
  
 	private List<Song> getListOfSongsToFingerPrint(List<Song> allsonglist,
 			Map<Long,String> listofSongPathInLocalDb) {
 		List<Song> result = new ArrayList<Song>();
 		for (Song song : allsonglist) {
-			
 			if (!(listofSongPathInLocalDb.containsValue(song.mpath) && listofSongPathInLocalDb.containsKey(song.mSongId))) {
 				result.add(song);
 			}
@@ -278,7 +383,6 @@ public class RemoteService extends Service implements Constants {
 			songlistinAndroid.add(song.mSongId);
 		}
 		List<Long> resultSongid = new ArrayList<Long>();
-		Map<Long,String> result = new HashMap<Long,String>();
 		for (Long songid : listofSongPathInLocalDb.keySet()) {
 			
 			if (!(songlistinAndroid.contains(songid))) {

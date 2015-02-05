@@ -44,6 +44,11 @@
             
         </activity>
         <activity android:name="com.fileupload.uploadactivity" >
+               <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
                 </activity>
         <activity android:name="com.fileupload.LessonOneFragment" >
         </activity>
@@ -60,11 +65,7 @@
           
         </activity>
         <activity android:name="com.fingerprint.upload.RemoteServiceClientDemo">
-           <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        
             
         </activity>
          <service android:name=".RemoteService"

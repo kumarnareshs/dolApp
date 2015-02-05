@@ -38,6 +38,7 @@ public class Fingerprint extends Model implements Constants{
     private Boolean isSongAvailableInServer;
     private Boolean isfulllengthfingerprintgenerated;
     private Boolean isfulllengthfingerprintuploaded;
+    private String status;
     private Boolean isuploaded;
     private java.util.Date uploadeddate;
     private java.util.Date lastuploadeddate;
@@ -51,7 +52,7 @@ public class Fingerprint extends Model implements Constants{
         this.id = id;
     }
 
-    public Fingerprint(Long id, Integer cid, String filename, String filepath, String filelength, Long androidmusicid, String fileformat, Float filesize, Integer filebitrate, Integer filefrequency, Integer filenoofchannels, String fingerprint, String fulllengthfingerprint, java.util.Date fingerprintcreateddate, Boolean isdeleted, Integer trackid, Boolean isSongAvailableInServer, Boolean isfulllengthfingerprintgenerated, Boolean isfulllengthfingerprintuploaded, Boolean isuploaded, java.util.Date uploadeddate, java.util.Date lastuploadeddate, java.util.Date createddate, java.util.Date lastmodifieddate) {
+    public Fingerprint(Long id, Integer cid, String filename, String filepath, String filelength, Long androidmusicid, String fileformat, Float filesize, Integer filebitrate, Integer filefrequency, Integer filenoofchannels, String fingerprint, String fulllengthfingerprint, java.util.Date fingerprintcreateddate, Boolean isdeleted, Integer trackid, Boolean isSongAvailableInServer, Boolean isfulllengthfingerprintgenerated, Boolean isfulllengthfingerprintuploaded, String status, Boolean isuploaded, java.util.Date uploadeddate, java.util.Date lastuploadeddate, java.util.Date createddate, java.util.Date lastmodifieddate) {
         this.id = id;
         this.cid = cid;
         this.filename = filename;
@@ -71,6 +72,7 @@ public class Fingerprint extends Model implements Constants{
         this.isSongAvailableInServer = isSongAvailableInServer;
         this.isfulllengthfingerprintgenerated = isfulllengthfingerprintgenerated;
         this.isfulllengthfingerprintuploaded = isfulllengthfingerprintuploaded;
+        this.status = status;
         this.isuploaded = isuploaded;
         this.uploadeddate = uploadeddate;
         this.lastuploadeddate = lastuploadeddate;
@@ -228,6 +230,14 @@ public class Fingerprint extends Model implements Constants{
 
     public void setIsfulllengthfingerprintuploaded(Boolean isfulllengthfingerprintuploaded) {
         this.isfulllengthfingerprintuploaded = isfulllengthfingerprintuploaded;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Boolean getIsuploaded() {

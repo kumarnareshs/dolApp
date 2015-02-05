@@ -3,7 +3,6 @@ package com.fileupload;
 import java.util.Date;
 
 import com.strongloop.android.loopback.Model;
-import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 public class MyModel extends Model {
 	String modelname;

@@ -3,17 +3,26 @@ package com.fileupload;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings.Secure;
 
 import com.database.Constants;
+import com.fingerprint.database.DBAdapter;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.remoting.adapters.RestContractItem;
+
+import de.greenrobot.daoexample.DaoMaster;
+import de.greenrobot.daoexample.DaoSession;
 
 public class MyApplication extends Application implements Constants {
     
 	RestAdapter adapter;
-   @SuppressWarnings("unused")
-private static final String TAG = "com.fileupload.MyApplication";
+	private static Context mContext;
+	private DaoMaster daoMaster;
+	private DaoSession daoSession;
+
+	@SuppressWarnings("unused")
+	private static final String TAG = "com.fileupload.MyApplication";
 
     public  RestAdapter getLoopBackAdapter() {
         if (adapter == null) {
@@ -36,7 +45,6 @@ private static final String TAG = "com.fileupload.MyApplication";
         }
         return adapter;
     }
-    private static Context mContext;
 
     @Override
     public void onCreate() {
@@ -45,15 +53,26 @@ private static final String TAG = "com.fileupload.MyApplication";
         SharedPreferences  sharedpreferences = getSharedPreferences(MyPREFERENCES, getApplicationContext().MODE_PRIVATE);
         String android_id = Secure.getString(getContentResolver(),
                 Secure.ANDROID_ID);
-        sharedpreferences.edit().putString(ANDROIDID, android_id).apply();
-    }
+		sharedpreferences.edit().putString(ANDROIDID, android_id).apply();
+		SQLiteDatabase db = SDcardOpenHelper.open();
+		daoMaster = new DaoMaster(db);
+		daoSession = daoMaster.newSession();
+	}
 
-   
-    public static Context getContext() {
-    	return mContext;
-    }
-    
+	public static Context getContext() {
+		return mContext;
+	}
 
-   
+	public DaoSession getGlobalDaoSession() {
+		if(daoSession == null){
+			daoSession = daoMaster.newSession();
+		}
+		return daoSession;
+	}
+	
+	public DaoSession getNewDaoSession() {
+		DaoSession dao = daoMaster.newSession();
+		return dao;
+	}
 
 }

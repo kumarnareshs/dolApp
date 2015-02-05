@@ -12,7 +12,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +35,7 @@ public class RemoteServiceClientDemo extends Activity implements Constants{
 	@SuppressWarnings("unused")
 	private static final String TAG = "com.fingerprint.upload.RemoteServiceClientDemo";
 	private Timer invokeTimer;
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +106,7 @@ public class RemoteServiceClientDemo extends Activity implements Constants{
     	} else {
     		 Intent i  = new Intent(getApplicationContext(),
                      RemoteService.class);
+    		 i.putExtra(JOB_TYPE, BACKGROUND_FINGERPRINT_JOB);
     		startService(i);
     		started = true;
     		updateServiceStatus();
