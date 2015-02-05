@@ -48,4 +48,13 @@ public interface Constants {
 	public static final String LAST_UPLOADED_DATE = "lastuploadeddate";
 	public static final String LAST_MODIFIED_DATE = "lastmodifieddate";
 	
+	
+	//Service 
+	public static final String JOB_TYPE = "Job_Type";
+	public static final String BACKGROUND_FINGERPRINT_JOB = "fingerprinting_job";
+	
+	//DAO Status
+	public static final String FP_STATUS_NOMATCHFOUND = "no match found";
+	public static final String FP_STATUS_FPGENERATED = "fp generated";
+	public static final String FP_STATUS_TRACKID_RECEIVED = "trackid received";
 }

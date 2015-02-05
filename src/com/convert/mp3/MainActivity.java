@@ -10,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fingerprint.upload.FingerPrintServer;
 import com.fingerprint.upload.R;
 
 public class MainActivity extends Activity implements OnClickListener {

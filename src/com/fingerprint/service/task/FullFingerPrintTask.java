@@ -13,7 +13,8 @@ import android.util.Log;
 
 import com.convert.mp3.FingerPrintGenerator;
 import com.database.Constants;
-import com.fingerprint.service.server.ServerSyncAdapter;
+import com.fingerprint.database.DBAdapter;
+import com.fingerprint.server.ServerSyncAdapter;
 import com.fingerprint.upload.Song;
 import com.fingerprint.upload.Util;
 
@@ -24,11 +25,10 @@ import de.greenrobot.daoexample.FingerprintDao.Properties;
 
 
 
-public class FullSongFingerPrintTask implements Constants{
+public class FullFingerPrintTask implements Constants{
 
 
  
-	private DaoSession daoSession;
 	private Util util;
 	private static int NoOffingerprintOperationDone=0;
 	private static int NoOfDatabaseOperationDone=0;
@@ -38,12 +38,14 @@ public class FullSongFingerPrintTask implements Constants{
 	private  final String TAG = getClass().getName();
 	private Application app;
 	private Context _context;
-	private FingerprintTaskListener fplistener;
+	private IInitialFingerPrintTaskListener fplistener;
+	private DBAdapter dbadapter;
 	
-	public FullSongFingerPrintTask(Application app,Context context,FingerprintTaskListener fplistener){
+	public FullFingerPrintTask(Application app,Context context,DBAdapter dbadapter,IInitialFingerPrintTaskListener fplistener){
 		this._context=context;
 		this.app=app;
 		this.fplistener=fplistener;
+		this.dbadapter=dbadapter;
 	}
 	
 	private void updateFingerPrintedSongInDB(Song FingerprintedSong ,String fingerprint,Long RowId) {
@@ -54,7 +56,7 @@ public class FullSongFingerPrintTask implements Constants{
 		fp.setIsfulllengthfingerprintgenerated(true);
 		fp.setIsfulllengthfingerprintuploaded(false);
 		fp.setLastmodifieddate(now);
-		FingerprintDao fpdao=daoSession.getFingerprintDao();
+		FingerprintDao fpdao=dbadapter.getGlobalDaoSession().getFingerprintDao();
 		List<String> fields = new ArrayList<String>();
 		fields.add(Properties.Fulllengthfingerprint.columnName);
 		fields.add(Properties.Lastmodifieddate.columnName);

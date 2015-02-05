@@ -1,4 +1,4 @@
-package com.fingerprint.service.server;
+package com.fingerprint.server;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,26 +6,22 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Application;
 import android.util.Log;
 
-import com.fileupload.MyApplication;
 import com.fingerprint.upload.Util;
-import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.remoting.adapters.Adapter;
 
 import de.greenrobot.daoexample.FingerPrintRepository;
 import de.greenrobot.daoexample.FingerprintDao.Properties;
 
-public class FingerPrintUpload {
+public class FingerPrintSync implements IFingerPrintSync{
 
-	private RestAdapter restAdapter;
+	
 	private FingerPrintRepository fingerPrintRepo;
 	private  final String TAG = getClass().getName();
 
-	public FingerPrintUpload(Application app) {
-		restAdapter = ((MyApplication) app).getLoopBackAdapter();
-		fingerPrintRepo = restAdapter.createRepository(FingerPrintRepository.class);
+	public FingerPrintSync( FingerPrintRepository fingerPrintRepo) {
+		this.fingerPrintRepo = fingerPrintRepo;
 	}
 	
 	

@@ -1,6 +1,6 @@
 package com.fingerprint.service.task;
 
-public interface FullSongFingerprintTaskListener {
+public interface IFullSongFingerprintTaskListener {
 
 	
 	public void onComplete();

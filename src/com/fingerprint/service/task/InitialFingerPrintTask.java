@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.convert.mp3.FingerPrintGenerator;
 import com.database.Constants;
-import com.fingerprint.service.server.ServerSyncAdapter;
+import com.fingerprint.server.ServerSyncAdapter;
 import com.fingerprint.upload.Song;
 import com.fingerprint.upload.Util;
 
@@ -21,10 +21,11 @@ import de.greenrobot.daoexample.FingerprintDao;
 
 
 
-public class FingerPrintTask implements Constants{
+public class InitialFingerPrintTask implements Constants{
 
 
  
+	
 	private DaoSession daoSession;
 	private Util util;
 	private static int NoOffingerprintOperationDone=0;
@@ -35,9 +36,9 @@ public class FingerPrintTask implements Constants{
 	private  final String TAG = getClass().getName();
 	private Application app;
 	private Context _context;
-	private FingerprintTaskListener fplistener;
+	private IInitialFingerPrintTaskListener fplistener;
 	
-	public FingerPrintTask(Application app,Context context,FingerprintTaskListener fplistener){
+	public InitialFingerPrintTask(Application app,Context context,IInitialFingerPrintTaskListener fplistener){
 		this._context=context;
 		this.app=app;
 		this.fplistener=fplistener;
@@ -55,8 +56,7 @@ public class FingerPrintTask implements Constants{
 		fp.setFingerprintcreateddate(now);
 		fp.setLastmodifieddate(now);
 		fp.setIsuploaded(false);
-		fp.setUploadeddate(now);
-		fp.setLastuploadeddate(now);
+		fp.setStatus(FP_STATUS_FPGENERATED);
 		fp.setAndroidmusicid((Long)FingerprintedSong.mSongId);
 		FingerprintDao fpdao=daoSession.getFingerprintDao();
 		Long rowId=fpdao.insert(fp);
@@ -94,13 +94,10 @@ public class FingerPrintTask implements Constants{
 							//new FingerPrintServer().Query(fingerPrint,RemoteService.this.getApplication());
 							statusmap.put(NO_OF_DATABASE_OPERATION_DONE, ++NoOfDatabaseOperationDone+"");
 							 ServerSyncAdapter sync = new  ServerSyncAdapter(app);
-							sync.startSync(FingerprintDao.TABLENAME,rowId);
+							sync.sendToServer(rowId, FingerprintDao.TABLENAME);
 							statusmap.put(NO_OF_SONG_PROCESSED, ++NoOfSongProcessed+"");
 						}
 						fplistener.onComplete();
-						//fpHandler.postDelayed(fpTask, 1000L);
-	
-						
 					}
 	
 					@Override

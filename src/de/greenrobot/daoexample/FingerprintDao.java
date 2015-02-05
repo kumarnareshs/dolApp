@@ -42,11 +42,12 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
         public final static Property IsSongAvailableInServer = new Property(16, Boolean.class, "isSongAvailableInServer", false, "IS_SONG_AVAILABLE_IN_SERVER");
         public final static Property Isfulllengthfingerprintgenerated = new Property(17, Boolean.class, "isfulllengthfingerprintgenerated", false, "ISFULLLENGTHFINGERPRINTGENERATED");
         public final static Property Isfulllengthfingerprintuploaded = new Property(18, Boolean.class, "isfulllengthfingerprintuploaded", false, "ISFULLLENGTHFINGERPRINTUPLOADED");
-        public final static Property Isuploaded = new Property(19, Boolean.class, "isuploaded", false, "ISUPLOADED");
-        public final static Property Uploadeddate = new Property(20, java.util.Date.class, "uploadeddate", false, "UPLOADEDDATE");
-        public final static Property Lastuploadeddate = new Property(21, java.util.Date.class, "lastuploadeddate", false, "LASTUPLOADEDDATE");
-        public final static Property Createddate = new Property(22, java.util.Date.class, "createddate", false, "CREATEDDATE");
-        public final static Property Lastmodifieddate = new Property(23, java.util.Date.class, "lastmodifieddate", false, "LASTMODIFIEDDATE");
+        public final static Property Status = new Property(19, String.class, "status", false, "STATUS");
+        public final static Property Isuploaded = new Property(20, Boolean.class, "isuploaded", false, "ISUPLOADED");
+        public final static Property Uploadeddate = new Property(21, java.util.Date.class, "uploadeddate", false, "UPLOADEDDATE");
+        public final static Property Lastuploadeddate = new Property(22, java.util.Date.class, "lastuploadeddate", false, "LASTUPLOADEDDATE");
+        public final static Property Createddate = new Property(23, java.util.Date.class, "createddate", false, "CREATEDDATE");
+        public final static Property Lastmodifieddate = new Property(24, java.util.Date.class, "lastmodifieddate", false, "LASTMODIFIEDDATE");
     };
 
 
@@ -81,11 +82,12 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
                 "'IS_SONG_AVAILABLE_IN_SERVER' INTEGER," + // 16: isSongAvailableInServer
                 "'ISFULLLENGTHFINGERPRINTGENERATED' INTEGER," + // 17: isfulllengthfingerprintgenerated
                 "'ISFULLLENGTHFINGERPRINTUPLOADED' INTEGER," + // 18: isfulllengthfingerprintuploaded
-                "'ISUPLOADED' INTEGER," + // 19: isuploaded
-                "'UPLOADEDDATE' INTEGER," + // 20: uploadeddate
-                "'LASTUPLOADEDDATE' INTEGER," + // 21: lastuploadeddate
-                "'CREATEDDATE' INTEGER," + // 22: createddate
-                "'LASTMODIFIEDDATE' INTEGER);"); // 23: lastmodifieddate
+                "'STATUS' TEXT," + // 19: status
+                "'ISUPLOADED' INTEGER," + // 20: isuploaded
+                "'UPLOADEDDATE' INTEGER," + // 21: uploadeddate
+                "'LASTUPLOADEDDATE' INTEGER," + // 22: lastuploadeddate
+                "'CREATEDDATE' INTEGER," + // 23: createddate
+                "'LASTMODIFIEDDATE' INTEGER);"); // 24: lastmodifieddate
     }
 
     /** Drops the underlying database table. */
@@ -194,29 +196,34 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
             stmt.bindLong(19, isfulllengthfingerprintuploaded ? 1l: 0l);
         }
  
+        String status = entity.getStatus();
+        if (status != null) {
+            stmt.bindString(20, status);
+        }
+ 
         Boolean isuploaded = entity.getIsuploaded();
         if (isuploaded != null) {
-            stmt.bindLong(20, isuploaded ? 1l: 0l);
+            stmt.bindLong(21, isuploaded ? 1l: 0l);
         }
  
         java.util.Date uploadeddate = entity.getUploadeddate();
         if (uploadeddate != null) {
-            stmt.bindLong(21, uploadeddate.getTime());
+            stmt.bindLong(22, uploadeddate.getTime());
         }
  
         java.util.Date lastuploadeddate = entity.getLastuploadeddate();
         if (lastuploadeddate != null) {
-            stmt.bindLong(22, lastuploadeddate.getTime());
+            stmt.bindLong(23, lastuploadeddate.getTime());
         }
  
         java.util.Date createddate = entity.getCreateddate();
         if (createddate != null) {
-            stmt.bindLong(23, createddate.getTime());
+            stmt.bindLong(24, createddate.getTime());
         }
  
         java.util.Date lastmodifieddate = entity.getLastmodifieddate();
         if (lastmodifieddate != null) {
-            stmt.bindLong(24, lastmodifieddate.getTime());
+            stmt.bindLong(25, lastmodifieddate.getTime());
         }
     }
 
@@ -249,11 +256,12 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
             cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0, // isSongAvailableInServer
             cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // isfulllengthfingerprintgenerated
             cursor.isNull(offset + 18) ? null : cursor.getShort(offset + 18) != 0, // isfulllengthfingerprintuploaded
-            cursor.isNull(offset + 19) ? null : cursor.getShort(offset + 19) != 0, // isuploaded
-            cursor.isNull(offset + 20) ? null : new java.util.Date(cursor.getLong(offset + 20)), // uploadeddate
-            cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)), // lastuploadeddate
-            cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)), // createddate
-            cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)) // lastmodifieddate
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // status
+            cursor.isNull(offset + 20) ? null : cursor.getShort(offset + 20) != 0, // isuploaded
+            cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)), // uploadeddate
+            cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)), // lastuploadeddate
+            cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)), // createddate
+            cursor.isNull(offset + 24) ? null : new java.util.Date(cursor.getLong(offset + 24)) // lastmodifieddate
         );
         return entity;
     }
@@ -280,11 +288,12 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
         entity.setIsSongAvailableInServer(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
         entity.setIsfulllengthfingerprintgenerated(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
         entity.setIsfulllengthfingerprintuploaded(cursor.isNull(offset + 18) ? null : cursor.getShort(offset + 18) != 0);
-        entity.setIsuploaded(cursor.isNull(offset + 19) ? null : cursor.getShort(offset + 19) != 0);
-        entity.setUploadeddate(cursor.isNull(offset + 20) ? null : new java.util.Date(cursor.getLong(offset + 20)));
-        entity.setLastuploadeddate(cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)));
-        entity.setCreateddate(cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)));
-        entity.setLastmodifieddate(cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)));
+        entity.setStatus(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setIsuploaded(cursor.isNull(offset + 20) ? null : cursor.getShort(offset + 20) != 0);
+        entity.setUploadeddate(cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)));
+        entity.setLastuploadeddate(cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)));
+        entity.setCreateddate(cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)));
+        entity.setLastmodifieddate(cursor.isNull(offset + 24) ? null : new java.util.Date(cursor.getLong(offset + 24)));
      }
     
     /** @inheritdoc */

@@ -1,36 +1,36 @@
-package com.fingerprint.upload;
+package com.fingerprint.database;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.database.Constants;
+import com.fileupload.MyApplication;
 
+import de.greenrobot.dao.identityscope.IdentityScopeType;
+import de.greenrobot.daoexample.DaoMaster;
+import de.greenrobot.daoexample.DaoSession;
+import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao;
-import de.greenrobot.daoexample.SDcardOpenHelper;
+import de.greenrobot.daoexample.FingerprintDao.Properties;
 
-public class DB implements Constants{
+public class FingerprintDB implements IFingerprintDB,Constants{
 
-	
 	private SQLiteDatabase db;
-	private SDcardOpenHelper sdhelper;
-	
-	DB(){
-		sdhelper = new SDcardOpenHelper();
-		db = sdhelper.open();
+	private FingerprintDao fingerprintDao;
+	private DaoSession daoSession;
+	private DaoSession localdaoSession;
+
+	public FingerprintDB(MyApplication app) {
+		this.db = app.getGlobalDaoSession().getDatabase();
+		this.daoSession = app.getGlobalDaoSession();
+		this.fingerprintDao = daoSession.getFingerprintDao();
 	}
-	
-	public DB(SQLiteDatabase db){
-		this.db =db;
-	}
-	
-	
+
 	public Map<Long,String> getListOfSongsPathInLocalDb() {
 		String filePathSqlQuery="SELECT "+FingerprintDao.Properties.Filepath.name +" , "+
 				FingerprintDao.Properties.Androidmusicid.name+" FROM "+FingerprintDao.TABLENAME;
@@ -59,14 +59,22 @@ public class DB implements Constants{
 
 	}
 
-	public Boolean setUploadedStatus(Long id) {
-		// TODO check for last uploaded date, if not null ,dont update uploaded date 
-		Calendar cal = Calendar.getInstance();
-		Date now = cal.getTime();
-		ContentValues cv = new ContentValues();
-		cv.put(LAST_MODIFIED_DATE, now.toString());
-		cv.put(LAST_UPLOADED_DATE, now.toString());
-		cv.put(UPLOADED_DATE, now.toString());
-		return (int)db.update(FingerprintDao.TABLENAME, cv, "_id="+id,null) > 0;
+	@Override
+	public void setFingerprintStatus(List<Long> listOfnomatchFoundSongs,
+			String status) {
+		
+		List<Fingerprint> fplist = new ArrayList<Fingerprint>();
+		for(Long l:listOfnomatchFoundSongs){
+			Fingerprint fp = new Fingerprint();
+			fp.setId(l);
+			fp.setStatus(status);
+			fplist.add(fp);
+		}
+		List<String> column = new ArrayList<String>();
+		column.add(Properties.Status.columnName);
+		fingerprintDao.updateColumnInTx(fplist, column);
+		fingerprintDao.refresh(fplist);
+		
 	}
+
 }
