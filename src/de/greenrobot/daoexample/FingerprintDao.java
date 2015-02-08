@@ -1,7 +1,5 @@
 package de.greenrobot.daoexample;
 
-import java.util.List;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -26,26 +24,26 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Cid = new Property(1, Integer.class, "cid", false, "CID");
-        public final static Property Filename = new Property(2, String.class, "filename", false, "FILENAME");
-        public final static Property Filepath = new Property(3, String.class, "filepath", false, "FILEPATH");
-        public final static Property Filelength = new Property(4, String.class, "filelength", false, "FILELENGTH");
-        public final static Property Androidmusicid = new Property(5, Long.class, "androidmusicid", false, "ANDROIDMUSICID");
-        public final static Property Fileformat = new Property(6, String.class, "fileformat", false, "FILEFORMAT");
-        public final static Property Filesize = new Property(7, Float.class, "filesize", false, "FILESIZE");
-        public final static Property Filebitrate = new Property(8, Integer.class, "filebitrate", false, "FILEBITRATE");
-        public final static Property Filefrequency = new Property(9, Integer.class, "filefrequency", false, "FILEFREQUENCY");
-        public final static Property Filenoofchannels = new Property(10, Integer.class, "filenoofchannels", false, "FILENOOFCHANNELS");
-        public final static Property Fingerprint = new Property(11, String.class, "fingerprint", false, "FINGERPRINT");
-        public final static Property Fulllengthfingerprint = new Property(12, String.class, "fulllengthfingerprint", false, "FULLLENGTHFINGERPRINT");
-        public final static Property Fingerprintcreateddate = new Property(13, java.util.Date.class, "fingerprintcreateddate", false, "FINGERPRINTCREATEDDATE");
-        public final static Property Isdeleted = new Property(14, Boolean.class, "isdeleted", false, "ISDELETED");
-        public final static Property Trackid = new Property(15, Integer.class, "trackid", false, "TRACKID");
-        public final static Property IsSongAvailableInServer = new Property(16, Boolean.class, "isSongAvailableInServer", false, "IS_SONG_AVAILABLE_IN_SERVER");
-        public final static Property Isfulllengthfingerprintgenerated = new Property(17, Boolean.class, "isfulllengthfingerprintgenerated", false, "ISFULLLENGTHFINGERPRINTGENERATED");
-        public final static Property Isfulllengthfingerprintuploaded = new Property(18, Boolean.class, "isfulllengthfingerprintuploaded", false, "ISFULLLENGTHFINGERPRINTUPLOADED");
-        public final static Property Status = new Property(19, String.class, "status", false, "STATUS");
-        public final static Property Isuploaded = new Property(20, Boolean.class, "isuploaded", false, "ISUPLOADED");
+        public final static Property Filename = new Property(1, String.class, "filename", false, "FILENAME");
+        public final static Property Filepath = new Property(2, String.class, "filepath", false, "FILEPATH");
+        public final static Property Filelength = new Property(3, String.class, "filelength", false, "FILELENGTH");
+        public final static Property Androidmusicid = new Property(4, Long.class, "androidmusicid", false, "ANDROIDMUSICID");
+        public final static Property Fileformat = new Property(5, String.class, "fileformat", false, "FILEFORMAT");
+        public final static Property Filesize = new Property(6, Float.class, "filesize", false, "FILESIZE");
+        public final static Property Filebitrate = new Property(7, Integer.class, "filebitrate", false, "FILEBITRATE");
+        public final static Property Filefrequency = new Property(8, Integer.class, "filefrequency", false, "FILEFREQUENCY");
+        public final static Property Filenoofchannels = new Property(9, Integer.class, "filenoofchannels", false, "FILENOOFCHANNELS");
+        public final static Property Fingerprint = new Property(10, String.class, "fingerprint", false, "FINGERPRINT");
+        public final static Property Fulllengthfingerprint = new Property(11, String.class, "fulllengthfingerprint", false, "FULLLENGTHFINGERPRINT");
+        public final static Property Fingerprintcreateddate = new Property(12, java.util.Date.class, "fingerprintcreateddate", false, "FINGERPRINTCREATEDDATE");
+        public final static Property Isdeleted = new Property(13, Boolean.class, "isdeleted", false, "ISDELETED");
+        public final static Property Trackid = new Property(14, Integer.class, "trackid", false, "TRACKID");
+        public final static Property IsSongAvailableInServer = new Property(15, Boolean.class, "isSongAvailableInServer", false, "IS_SONG_AVAILABLE_IN_SERVER");
+        public final static Property Isfulllengthfingerprintgenerated = new Property(16, Boolean.class, "isfulllengthfingerprintgenerated", false, "ISFULLLENGTHFINGERPRINTGENERATED");
+        public final static Property Isfulllengthfingerprintuploaded = new Property(17, Boolean.class, "isfulllengthfingerprintuploaded", false, "ISFULLLENGTHFINGERPRINTUPLOADED");
+        public final static Property Status = new Property(18, String.class, "status", false, "STATUS");
+        public final static Property Tempmetadatarowid = new Property(19, Integer.class, "tempmetadatarowid", false, "TEMPMETADATAROWID");
+        public final static Property Cid = new Property(20, Integer.class, "cid", false, "CID");
         public final static Property Uploadeddate = new Property(21, java.util.Date.class, "uploadeddate", false, "UPLOADEDDATE");
         public final static Property Lastuploadeddate = new Property(22, java.util.Date.class, "lastuploadeddate", false, "LASTUPLOADEDDATE");
         public final static Property Createddate = new Property(23, java.util.Date.class, "createddate", false, "CREATEDDATE");
@@ -66,26 +64,26 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'FINGERPRINT' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'CID' INTEGER," + // 1: cid
-                "'FILENAME' TEXT," + // 2: filename
-                "'FILEPATH' TEXT," + // 3: filepath
-                "'FILELENGTH' TEXT," + // 4: filelength
-                "'ANDROIDMUSICID' INTEGER," + // 5: androidmusicid
-                "'FILEFORMAT' TEXT," + // 6: fileformat
-                "'FILESIZE' REAL," + // 7: filesize
-                "'FILEBITRATE' INTEGER," + // 8: filebitrate
-                "'FILEFREQUENCY' INTEGER," + // 9: filefrequency
-                "'FILENOOFCHANNELS' INTEGER," + // 10: filenoofchannels
-                "'FINGERPRINT' TEXT," + // 11: fingerprint
-                "'FULLLENGTHFINGERPRINT' TEXT," + // 12: fulllengthfingerprint
-                "'FINGERPRINTCREATEDDATE' INTEGER," + // 13: fingerprintcreateddate
-                "'ISDELETED' INTEGER," + // 14: isdeleted
-                "'TRACKID' INTEGER," + // 15: trackid
-                "'IS_SONG_AVAILABLE_IN_SERVER' INTEGER," + // 16: isSongAvailableInServer
-                "'ISFULLLENGTHFINGERPRINTGENERATED' INTEGER," + // 17: isfulllengthfingerprintgenerated
-                "'ISFULLLENGTHFINGERPRINTUPLOADED' INTEGER," + // 18: isfulllengthfingerprintuploaded
-                "'STATUS' TEXT," + // 19: status
-                "'ISUPLOADED' INTEGER," + // 20: isuploaded
+                "'FILENAME' TEXT," + // 1: filename
+                "'FILEPATH' TEXT," + // 2: filepath
+                "'FILELENGTH' TEXT," + // 3: filelength
+                "'ANDROIDMUSICID' INTEGER," + // 4: androidmusicid
+                "'FILEFORMAT' TEXT," + // 5: fileformat
+                "'FILESIZE' REAL," + // 6: filesize
+                "'FILEBITRATE' INTEGER," + // 7: filebitrate
+                "'FILEFREQUENCY' INTEGER," + // 8: filefrequency
+                "'FILENOOFCHANNELS' INTEGER," + // 9: filenoofchannels
+                "'FINGERPRINT' TEXT," + // 10: fingerprint
+                "'FULLLENGTHFINGERPRINT' TEXT," + // 11: fulllengthfingerprint
+                "'FINGERPRINTCREATEDDATE' INTEGER," + // 12: fingerprintcreateddate
+                "'ISDELETED' INTEGER," + // 13: isdeleted
+                "'TRACKID' INTEGER," + // 14: trackid
+                "'IS_SONG_AVAILABLE_IN_SERVER' INTEGER," + // 15: isSongAvailableInServer
+                "'ISFULLLENGTHFINGERPRINTGENERATED' INTEGER," + // 16: isfulllengthfingerprintgenerated
+                "'ISFULLLENGTHFINGERPRINTUPLOADED' INTEGER," + // 17: isfulllengthfingerprintuploaded
+                "'STATUS' TEXT," + // 18: status
+                "'TEMPMETADATAROWID' INTEGER," + // 19: tempmetadatarowid
+                "'CID' INTEGER," + // 20: cid
                 "'UPLOADEDDATE' INTEGER," + // 21: uploadeddate
                 "'LASTUPLOADEDDATE' INTEGER," + // 22: lastuploadeddate
                 "'CREATEDDATE' INTEGER," + // 23: createddate
@@ -108,104 +106,104 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
             stmt.bindLong(1, id);
         }
  
-        Integer cid = entity.getCid();
-        if (cid != null) {
-            stmt.bindLong(2, cid);
-        }
- 
         String filename = entity.getFilename();
         if (filename != null) {
-            stmt.bindString(3, filename);
+            stmt.bindString(2, filename);
         }
  
         String filepath = entity.getFilepath();
         if (filepath != null) {
-            stmt.bindString(4, filepath);
+            stmt.bindString(3, filepath);
         }
  
         String filelength = entity.getFilelength();
         if (filelength != null) {
-            stmt.bindString(5, filelength);
+            stmt.bindString(4, filelength);
         }
  
         Long androidmusicid = entity.getAndroidmusicid();
         if (androidmusicid != null) {
-            stmt.bindLong(6, androidmusicid);
+            stmt.bindLong(5, androidmusicid);
         }
  
         String fileformat = entity.getFileformat();
         if (fileformat != null) {
-            stmt.bindString(7, fileformat);
+            stmt.bindString(6, fileformat);
         }
  
         Float filesize = entity.getFilesize();
         if (filesize != null) {
-            stmt.bindDouble(8, filesize);
+            stmt.bindDouble(7, filesize);
         }
  
         Integer filebitrate = entity.getFilebitrate();
         if (filebitrate != null) {
-            stmt.bindLong(9, filebitrate);
+            stmt.bindLong(8, filebitrate);
         }
  
         Integer filefrequency = entity.getFilefrequency();
         if (filefrequency != null) {
-            stmt.bindLong(10, filefrequency);
+            stmt.bindLong(9, filefrequency);
         }
  
         Integer filenoofchannels = entity.getFilenoofchannels();
         if (filenoofchannels != null) {
-            stmt.bindLong(11, filenoofchannels);
+            stmt.bindLong(10, filenoofchannels);
         }
  
         String fingerprint = entity.getFingerprint();
         if (fingerprint != null) {
-            stmt.bindString(12, fingerprint);
+            stmt.bindString(11, fingerprint);
         }
  
         String fulllengthfingerprint = entity.getFulllengthfingerprint();
         if (fulllengthfingerprint != null) {
-            stmt.bindString(13, fulllengthfingerprint);
+            stmt.bindString(12, fulllengthfingerprint);
         }
  
         java.util.Date fingerprintcreateddate = entity.getFingerprintcreateddate();
         if (fingerprintcreateddate != null) {
-            stmt.bindLong(14, fingerprintcreateddate.getTime());
+            stmt.bindLong(13, fingerprintcreateddate.getTime());
         }
  
         Boolean isdeleted = entity.getIsdeleted();
         if (isdeleted != null) {
-            stmt.bindLong(15, isdeleted ? 1l: 0l);
+            stmt.bindLong(14, isdeleted ? 1l: 0l);
         }
  
         Integer trackid = entity.getTrackid();
         if (trackid != null) {
-            stmt.bindLong(16, trackid);
+            stmt.bindLong(15, trackid);
         }
  
         Boolean isSongAvailableInServer = entity.getIsSongAvailableInServer();
         if (isSongAvailableInServer != null) {
-            stmt.bindLong(17, isSongAvailableInServer ? 1l: 0l);
+            stmt.bindLong(16, isSongAvailableInServer ? 1l: 0l);
         }
  
         Boolean isfulllengthfingerprintgenerated = entity.getIsfulllengthfingerprintgenerated();
         if (isfulllengthfingerprintgenerated != null) {
-            stmt.bindLong(18, isfulllengthfingerprintgenerated ? 1l: 0l);
+            stmt.bindLong(17, isfulllengthfingerprintgenerated ? 1l: 0l);
         }
  
         Boolean isfulllengthfingerprintuploaded = entity.getIsfulllengthfingerprintuploaded();
         if (isfulllengthfingerprintuploaded != null) {
-            stmt.bindLong(19, isfulllengthfingerprintuploaded ? 1l: 0l);
+            stmt.bindLong(18, isfulllengthfingerprintuploaded ? 1l: 0l);
         }
  
         String status = entity.getStatus();
         if (status != null) {
-            stmt.bindString(20, status);
+            stmt.bindString(19, status);
         }
  
-        Boolean isuploaded = entity.getIsuploaded();
-        if (isuploaded != null) {
-            stmt.bindLong(21, isuploaded ? 1l: 0l);
+        Integer tempmetadatarowid = entity.getTempmetadatarowid();
+        if (tempmetadatarowid != null) {
+            stmt.bindLong(20, tempmetadatarowid);
+        }
+ 
+        Integer cid = entity.getCid();
+        if (cid != null) {
+            stmt.bindLong(21, cid);
         }
  
         java.util.Date uploadeddate = entity.getUploadeddate();
@@ -240,26 +238,26 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
     public Fingerprint readEntity(Cursor cursor, int offset) {
         Fingerprint entity = new Fingerprint( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // cid
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // filename
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // filepath
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // filelength
-            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // androidmusicid
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // fileformat
-            cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7), // filesize
-            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8), // filebitrate
-            cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9), // filefrequency
-            cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10), // filenoofchannels
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // fingerprint
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // fulllengthfingerprint
-            cursor.isNull(offset + 13) ? null : new java.util.Date(cursor.getLong(offset + 13)), // fingerprintcreateddate
-            cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0, // isdeleted
-            cursor.isNull(offset + 15) ? null : cursor.getInt(offset + 15), // trackid
-            cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0, // isSongAvailableInServer
-            cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // isfulllengthfingerprintgenerated
-            cursor.isNull(offset + 18) ? null : cursor.getShort(offset + 18) != 0, // isfulllengthfingerprintuploaded
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // status
-            cursor.isNull(offset + 20) ? null : cursor.getShort(offset + 20) != 0, // isuploaded
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // filename
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // filepath
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // filelength
+            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // androidmusicid
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // fileformat
+            cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6), // filesize
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // filebitrate
+            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8), // filefrequency
+            cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9), // filenoofchannels
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // fingerprint
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // fulllengthfingerprint
+            cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)), // fingerprintcreateddate
+            cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0, // isdeleted
+            cursor.isNull(offset + 14) ? null : cursor.getInt(offset + 14), // trackid
+            cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0, // isSongAvailableInServer
+            cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0, // isfulllengthfingerprintgenerated
+            cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // isfulllengthfingerprintuploaded
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // status
+            cursor.isNull(offset + 19) ? null : cursor.getInt(offset + 19), // tempmetadatarowid
+            cursor.isNull(offset + 20) ? null : cursor.getInt(offset + 20), // cid
             cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)), // uploadeddate
             cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)), // lastuploadeddate
             cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)), // createddate
@@ -272,26 +270,26 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
     @Override
     public void readEntity(Cursor cursor, Fingerprint entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setCid(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
-        entity.setFilename(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFilepath(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setFilelength(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setAndroidmusicid(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
-        entity.setFileformat(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setFilesize(cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7));
-        entity.setFilebitrate(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
-        entity.setFilefrequency(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
-        entity.setFilenoofchannels(cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10));
-        entity.setFingerprint(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setFulllengthfingerprint(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setFingerprintcreateddate(cursor.isNull(offset + 13) ? null : new java.util.Date(cursor.getLong(offset + 13)));
-        entity.setIsdeleted(cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0);
-        entity.setTrackid(cursor.isNull(offset + 15) ? null : cursor.getInt(offset + 15));
-        entity.setIsSongAvailableInServer(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
-        entity.setIsfulllengthfingerprintgenerated(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
-        entity.setIsfulllengthfingerprintuploaded(cursor.isNull(offset + 18) ? null : cursor.getShort(offset + 18) != 0);
-        entity.setStatus(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setIsuploaded(cursor.isNull(offset + 20) ? null : cursor.getShort(offset + 20) != 0);
+        entity.setFilename(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setFilepath(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setFilelength(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setAndroidmusicid(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setFileformat(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setFilesize(cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6));
+        entity.setFilebitrate(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setFilefrequency(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
+        entity.setFilenoofchannels(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
+        entity.setFingerprint(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setFulllengthfingerprint(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setFingerprintcreateddate(cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)));
+        entity.setIsdeleted(cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0);
+        entity.setTrackid(cursor.isNull(offset + 14) ? null : cursor.getInt(offset + 14));
+        entity.setIsSongAvailableInServer(cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0);
+        entity.setIsfulllengthfingerprintgenerated(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
+        entity.setIsfulllengthfingerprintuploaded(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
+        entity.setStatus(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setTempmetadatarowid(cursor.isNull(offset + 19) ? null : cursor.getInt(offset + 19));
+        entity.setCid(cursor.isNull(offset + 20) ? null : cursor.getInt(offset + 20));
         entity.setUploadeddate(cursor.isNull(offset + 21) ? null : new java.util.Date(cursor.getLong(offset + 21)));
         entity.setLastuploadeddate(cursor.isNull(offset + 22) ? null : new java.util.Date(cursor.getLong(offset + 22)));
         entity.setCreateddate(cursor.isNull(offset + 23) ? null : new java.util.Date(cursor.getLong(offset + 23)));
@@ -320,7 +318,5 @@ public class FingerprintDao extends AbstractDao<Fingerprint, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
-
-	
     
 }

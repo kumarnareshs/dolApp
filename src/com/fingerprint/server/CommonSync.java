@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Application;
 import android.util.Log;
 
+import com.database.Constants;
 import com.fingerprint.database.DBAdapter;
 import com.fingerprint.upload.DaoUtil;
 import com.fingerprint.upload.Util;
@@ -18,8 +19,9 @@ import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao.Properties;
 
-public class CommonSync<T extends Model> implements ICommomSync {
+public class CommonSync<T extends Model> implements ICommomSync,Constants {
 
+	
 	private RestAdapter restAdapter;
 	private DBAdapter dbadapter;
 	private final String TAG = getClass().getName();
@@ -45,14 +47,14 @@ public class CommonSync<T extends Model> implements ICommomSync {
 				if (objects.size() != 0) {
 					List<T> modelobjects = (List<T>) DaoUtil.ConvertRawObjectsToModels(objects);
 					for (T model : modelobjects) {
-						dbadapter.setUploadedStatus((Long) model.getId(),tablename);
+						dbadapter.setInitialUploadedStatus((Long) model.getId(),tablename);
 					}
 				}
 			}
 
 			@Override
 			public void onError(Throwable t) {
-				android.os.Debug.waitForDebugger();
+				Util.setDebuger();
 				Log.e(TAG, "::onError:" + t);
 			}
 		});
@@ -62,7 +64,7 @@ public class CommonSync<T extends Model> implements ICommomSync {
 	public void sendAllToServer(String tablename) {
 
 		QueryBuilder qb = DaoUtil.getQueryBuilder(tablename, dbadapter);
-		qb.where(Properties.Isuploaded.eq(Boolean.FALSE));
+		qb.where(Properties.Uploadeddate.isNull());
 		List modellist = qb.list();
 		send(modellist, tablename);
 	}
@@ -79,11 +81,18 @@ public class CommonSync<T extends Model> implements ICommomSync {
 
 	@Override
 	public void sendToServer(List<Long> ids, String tablename) {
-
 		QueryBuilder qb = DaoUtil.getQueryBuilder(tablename, dbadapter);
 		qb.where(Properties.Id.in(ids));
 		List modellist = qb.list();
 		send(modellist, tablename);
-
+	}
+	
+	public void initialSync(String tablename){
+		QueryBuilder qb = DaoUtil.getQueryBuilder(tablename, dbadapter);
+		qb.where(Properties.Status.eq(SERVER_STATUS_READY_TO_UPLOAD),Properties.Uploadeddate.isNull());
+		List modellist = qb.list();
+		if(modellist.size()>0){			
+			send(modellist, tablename);
+		}
 	}
 }

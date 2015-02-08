@@ -1,5 +1,8 @@
 package com.fileupload;
 
+import java.io.File;
+import java.io.IOException;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings.Secure;
 
 import com.database.Constants;
-import com.fingerprint.database.DBAdapter;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.remoting.adapters.RestContractItem;
 
@@ -57,6 +59,15 @@ public class MyApplication extends Application implements Constants {
 		SQLiteDatabase db = SDcardOpenHelper.open();
 		daoMaster = new DaoMaster(db);
 		daoSession = daoMaster.newSession();
+		File temp = new File(TEMP_DIR,".nomedia");
+		if(!temp.exists()){
+			try {
+				temp.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	public static Context getContext() {

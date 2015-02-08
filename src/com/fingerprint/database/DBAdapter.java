@@ -9,9 +9,19 @@ import com.fileupload.MyApplication;
 
 import de.greenrobot.daoexample.DaoSession;
 
-public class DBAdapter implements IFingerprintDB {
+public class DBAdapter implements IFingerprintDB,ICommonDB {
 
 	private IFingerprintDB IF;
+	
+	public Boolean setInitialUploadedStatus(Long id, String tablename) {
+		return IC.setInitialUploadedStatus(id, tablename);
+	}
+
+	public void setFingerprintStatus(Long listOfnomatchFoundSongs,
+			String fpStatusNomatchfound) {
+		IF.setFingerprintStatus(listOfnomatchFoundSongs, fpStatusNomatchfound);
+	}
+
 	private ICommonDB IC;
 	private static DBAdapter dbadapter ;
 	private MyApplication myapp;
@@ -21,9 +31,6 @@ public class DBAdapter implements IFingerprintDB {
 		IF.setFingerprintStatus(listOfnomatchFoundSongs, fpStatusNomatchfound);
 	}
 
-	public Boolean setUploadedStatus(Long id, String tableName) {
-		return IC.setUploadedStatus(id, tableName);
-	}
 
 	public Map<Long, String> getListOfSongsPathInLocalDb() {
 		return IF.getListOfSongsPathInLocalDb();
@@ -57,5 +64,7 @@ public class DBAdapter implements IFingerprintDB {
 	public DaoSession getNewDaoSession() {
 		return myapp.getNewDaoSession();
 	}
+
+	
 
 }

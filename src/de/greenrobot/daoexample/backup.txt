@@ -6,4 +6,7 @@ public class Fingerprint extends Model implements Constants{
 		put(ANDROIDID, Util.getAndroidId());
 		return super.toMap();
 	}
+
+
+public class Metadata extends Model implements Constants{
 	

@@ -18,9 +18,7 @@ public class Fingerprint extends Model implements Constants{
 		put(ANDROIDID, Util.getAndroidId());
 		return super.toMap();
 	}
-	
     private Long id;
-    private Integer cid;
     private String filename;
     private String filepath;
     private String filelength;
@@ -39,7 +37,8 @@ public class Fingerprint extends Model implements Constants{
     private Boolean isfulllengthfingerprintgenerated;
     private Boolean isfulllengthfingerprintuploaded;
     private String status;
-    private Boolean isuploaded;
+    private Integer tempmetadatarowid;
+    private Integer cid;
     private java.util.Date uploadeddate;
     private java.util.Date lastuploadeddate;
     private java.util.Date createddate;
@@ -52,9 +51,8 @@ public class Fingerprint extends Model implements Constants{
         this.id = id;
     }
 
-    public Fingerprint(Long id, Integer cid, String filename, String filepath, String filelength, Long androidmusicid, String fileformat, Float filesize, Integer filebitrate, Integer filefrequency, Integer filenoofchannels, String fingerprint, String fulllengthfingerprint, java.util.Date fingerprintcreateddate, Boolean isdeleted, Integer trackid, Boolean isSongAvailableInServer, Boolean isfulllengthfingerprintgenerated, Boolean isfulllengthfingerprintuploaded, String status, Boolean isuploaded, java.util.Date uploadeddate, java.util.Date lastuploadeddate, java.util.Date createddate, java.util.Date lastmodifieddate) {
+    public Fingerprint(Long id, String filename, String filepath, String filelength, Long androidmusicid, String fileformat, Float filesize, Integer filebitrate, Integer filefrequency, Integer filenoofchannels, String fingerprint, String fulllengthfingerprint, java.util.Date fingerprintcreateddate, Boolean isdeleted, Integer trackid, Boolean isSongAvailableInServer, Boolean isfulllengthfingerprintgenerated, Boolean isfulllengthfingerprintuploaded, String status, Integer tempmetadatarowid, Integer cid, java.util.Date uploadeddate, java.util.Date lastuploadeddate, java.util.Date createddate, java.util.Date lastmodifieddate) {
         this.id = id;
-        this.cid = cid;
         this.filename = filename;
         this.filepath = filepath;
         this.filelength = filelength;
@@ -73,7 +71,8 @@ public class Fingerprint extends Model implements Constants{
         this.isfulllengthfingerprintgenerated = isfulllengthfingerprintgenerated;
         this.isfulllengthfingerprintuploaded = isfulllengthfingerprintuploaded;
         this.status = status;
-        this.isuploaded = isuploaded;
+        this.tempmetadatarowid = tempmetadatarowid;
+        this.cid = cid;
         this.uploadeddate = uploadeddate;
         this.lastuploadeddate = lastuploadeddate;
         this.createddate = createddate;
@@ -86,14 +85,6 @@ public class Fingerprint extends Model implements Constants{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getCid() {
-        return cid;
-    }
-
-    public void setCid(Integer cid) {
-        this.cid = cid;
     }
 
     public String getFilename() {
@@ -240,12 +231,20 @@ public class Fingerprint extends Model implements Constants{
         this.status = status;
     }
 
-    public Boolean getIsuploaded() {
-        return isuploaded;
+    public Integer getTempmetadatarowid() {
+        return tempmetadatarowid;
     }
 
-    public void setIsuploaded(Boolean isuploaded) {
-        this.isuploaded = isuploaded;
+    public void setTempmetadatarowid(Integer tempmetadatarowid) {
+        this.tempmetadatarowid = tempmetadatarowid;
+    }
+
+    public Integer getCid() {
+        return cid;
+    }
+
+    public void setCid(Integer cid) {
+        this.cid = cid;
     }
 
     public java.util.Date getUploadeddate() {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fingerprint.database.DBAdapter;
-import com.strongloop.android.loopback.Model;
 import com.strongloop.android.loopback.ModelRepository;
 import com.strongloop.android.loopback.RestAdapter;
 
@@ -12,6 +11,8 @@ import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daoexample.FingerPrintRepository;
 import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao;
+import de.greenrobot.daoexample.Metadata;
+import de.greenrobot.daoexample.MetadataDao;
 
 public class DaoUtil {
 
@@ -24,7 +25,7 @@ public class DaoUtil {
 		return mr;
 	}
 	
-	public static List<? extends Model> ConvertRawObjectsToModels(List objects) {
+	public static List ConvertRawObjectsToModels(List objects) {
 		if (objects.size() == 0) {
 			return null;
 		}
@@ -40,7 +41,19 @@ public class DaoUtil {
 
 			}
 			return fplist;
-		} else {
+		} else
+			if (classname.equalsIgnoreCase(MetadataDao.TABLENAME)) {
+				List<Metadata> metalist = new ArrayList<Metadata>();
+				for (Metadata obj : (List<Metadata>) objects) {
+					if (obj.getCid() != null) {
+						obj.setId(Long.valueOf(obj.getCid()));
+					}
+					metalist.add(obj);
+
+				}
+				return metalist;
+			} 
+			else {
 			return null;
 		}
 	}

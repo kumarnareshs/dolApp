@@ -97,8 +97,7 @@ public class uploadactivity extends Activity {
 					DeleteServerRecord();
 			} else if (selected.equalsIgnoreCase("Sync Test")) {
 				Application  app= uploadactivity.this.getApplication();
-				TestServerSyncAdapter sync = new TestServerSyncAdapter(app);
-				sync.startSync(FingerprintDao.TABLENAME);
+				
 			}
 			}
 		});

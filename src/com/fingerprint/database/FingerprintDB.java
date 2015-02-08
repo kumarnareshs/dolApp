@@ -11,8 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.database.Constants;
 import com.fileupload.MyApplication;
 
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.daoexample.DaoMaster;
 import de.greenrobot.daoexample.DaoSession;
 import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao;
@@ -62,19 +60,22 @@ public class FingerprintDB implements IFingerprintDB,Constants{
 	@Override
 	public void setFingerprintStatus(List<Long> listOfnomatchFoundSongs,
 			String status) {
-		
-		List<Fingerprint> fplist = new ArrayList<Fingerprint>();
 		for(Long l:listOfnomatchFoundSongs){
-			Fingerprint fp = new Fingerprint();
-			fp.setId(l);
-			fp.setStatus(status);
-			fplist.add(fp);
+			setFingerprintStatus(l, status);
 		}
+	}
+
+	@Override
+	public void setFingerprintStatus(Long rowid, String Status) {
+		List<Fingerprint> fplist = new ArrayList<Fingerprint>();
+		Fingerprint fp = new Fingerprint();
+		fp.setId(rowid);
+		fp.setStatus(Status);
+		fplist.add(fp);
 		List<String> column = new ArrayList<String>();
 		column.add(Properties.Status.columnName);
 		fingerprintDao.updateColumnInTx(fplist, column);
 		fingerprintDao.refresh(fplist);
-		
 	}
 
 }

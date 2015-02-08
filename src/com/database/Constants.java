@@ -8,13 +8,16 @@ import android.os.Environment;
 
 public interface Constants {
 
-	public static final String HOST ="http://192.168.77.52";
+	//public static final String HOST ="http://192.168.43.70";
+	public static final String HOST ="http://192.168.1.6";
+	//public static final String HOST ="http://192.168.1.3";
 	public static final String PORT ="3000";
 	public static final String DATABASE_NAME = "music.db";
 	public static final int DATABASE_VERSION = 4;
 	public static final String SDCARD_DIRECTORY = Environment.getExternalStorageDirectory().toString();
 	public static final String DATABASE_DIRECTORY = "mymusic";
-	File TEMP_DIR = new File(Environment.getExternalStorageDirectory()+ "/mymusic/");
+	public static final File TEMP_DIR = new File(Environment.getExternalStorageDirectory()+ "/mymusic/");
+	public static final String Temp_WavFile = "temp.wav";
 	/*{
 	    "appname": 
 	        {
@@ -42,12 +45,6 @@ public interface Constants {
 	public static final String MyPREFERENCES = "MyPREFERENCES";
 	public static final String ANDROIDID = "androidid";
 
-	//DB related
-	public static final String IS_UPLOADED = "isuploaded";
-	public static final String UPLOADED_DATE = "uploadeddate";
-	public static final String LAST_UPLOADED_DATE = "lastuploadeddate";
-	public static final String LAST_MODIFIED_DATE = "lastmodifieddate";
-	
 	
 	//Service 
 	public static final String JOB_TYPE = "Job_Type";
@@ -56,5 +53,11 @@ public interface Constants {
 	//DAO Status
 	public static final String FP_STATUS_NOMATCHFOUND = "no match found";
 	public static final String FP_STATUS_FPGENERATED = "fp generated";
+	public static final String FP_STATUS_FULLFPGENERATED = "full fp generated";
+	public static final String FP_STATUS_FULLFPUPLOADED = "full fp uploaded";
 	public static final String FP_STATUS_TRACKID_RECEIVED = "trackid received";
+	public static final String FP_STATUS_METADATARECEIVED = "metadata received";
+	
+	public static final String SERVER_STATUS_READY_TO_UPLOAD = "ready to upload";
+	public static final String SERVER_STATUS_UPLOADED = "uploaded";
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.convert.mp3.FingerPrintGenerator;
 import com.database.Constants;
+import com.fingerprint.database.DBAdapter;
 import com.fingerprint.server.ServerSyncAdapter;
 import com.fingerprint.upload.Song;
 import com.fingerprint.upload.Util;
@@ -19,29 +20,21 @@ import de.greenrobot.daoexample.DaoSession;
 import de.greenrobot.daoexample.Fingerprint;
 import de.greenrobot.daoexample.FingerprintDao;
 
-
-
 public class InitialFingerPrintTask implements Constants{
-
-
- 
 	
 	private DaoSession daoSession;
 	private Util util;
-	private static int NoOffingerprintOperationDone=0;
-	private static int NoOfDatabaseOperationDone=0;
-	private static int NoOfSongProcessed=0;
-	private static Map<String,String> statusmap;
-	private String currentFingerPrintingSong;
 	private  final String TAG = getClass().getName();
 	private Application app;
-	private Context _context;
+	private DBAdapter dbadapter;
 	private IInitialFingerPrintTaskListener fplistener;
 	
-	public InitialFingerPrintTask(Application app,Context context,IInitialFingerPrintTaskListener fplistener){
-		this._context=context;
-		this.app=app;
-		this.fplistener=fplistener;
+	public InitialFingerPrintTask(Application app, DBAdapter dbadapter,IInitialFingerPrintTaskListener fplistener) {
+		this.dbadapter = dbadapter;
+		this.app = app;
+		this.fplistener = fplistener;
+		daoSession = dbadapter.getGlobalDaoSession();
+		util = new Util(app.getApplicationContext());
 	}
 	
 	private Long insertFingerPrintedSongInDB(Song FingerprintedSong ,String fingerprint) {
@@ -55,8 +48,7 @@ public class InitialFingerPrintTask implements Constants{
 		fp.setCreateddate(now);
 		fp.setFingerprintcreateddate(now);
 		fp.setLastmodifieddate(now);
-		fp.setIsuploaded(false);
-		fp.setStatus(FP_STATUS_FPGENERATED);
+		fp.setStatus(SERVER_STATUS_READY_TO_UPLOAD);
 		fp.setAndroidmusicid((Long)FingerprintedSong.mSongId);
 		FingerprintDao fpdao=daoSession.getFingerprintDao();
 		Long rowId=fpdao.insert(fp);
@@ -73,36 +65,33 @@ public class InitialFingerPrintTask implements Constants{
 	public void fingerprintMusic(final Song songToFingerprint) {
 		
 		File filename = new File(songToFingerprint.mpath);
-		currentFingerPrintingSong = songToFingerprint.mpath;
-		Log.i(TAG, "::fingerprintMusic:" + currentFingerPrintingSong);
-		FingerPrintGenerator fpg = new FingerPrintGenerator(_context, filename,false,
+		Log.i(TAG, "Initial ::fingerprintMusic:" + songToFingerprint.mpath);
+		FingerPrintGenerator fpg = new FingerPrintGenerator(app.getApplicationContext(), filename,false,
 				new FingerPrintGenerator.FingerPrintListener() {
 	
 					 
 					@Override
 					public void onCompletedSuccess(String fingerPrint) {
-						//android.os.Debug.waitForDebugger();
+						//Util.setDebuger();
 						//TODO remove it
 						
-						statusmap.put(NO_OFFINGERPRINT_OPERATION_DONE, ++NoOffingerprintOperationDone+"");
+						
 						Long rowId=insertFingerPrintedSongInDB(songToFingerprint,fingerPrint);
 						
-						Log.i(TAG, "::onCompletedSuccess: Path "+songToFingerprint.mpath);
+						Log.i(TAG, "::Initial ::fingerprintMusic Success: Path "+songToFingerprint.mpath);
 						if(rowId!= null && util.isConnectingToInternet()){
 							//modify the song length and ingest to the FP Server Initally
 							//new FingerPrintServer().Ingest(fingerPrint,songToFingerprint.mSongName,RemoteService.this.getApplication());
 							//new FingerPrintServer().Query(fingerPrint,RemoteService.this.getApplication());
-							statusmap.put(NO_OF_DATABASE_OPERATION_DONE, ++NoOfDatabaseOperationDone+"");
 							 ServerSyncAdapter sync = new  ServerSyncAdapter(app);
 							sync.sendToServer(rowId, FingerprintDao.TABLENAME);
-							statusmap.put(NO_OF_SONG_PROCESSED, ++NoOfSongProcessed+"");
 						}
 						fplistener.onComplete();
 					}
 	
 					@Override
 					public void onCompletedFailure(String ExceptionMsg) {
-						android.os.Debug.waitForDebugger();
+						Util.setDebuger();
 						//TODO:: log the request
 							Log.e(TAG, "FingerPrint Error" +ExceptionMsg);
 							fplistener.onFailure();

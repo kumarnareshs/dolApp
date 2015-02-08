@@ -12,6 +12,7 @@ import com.strongloop.android.loopback.ModelRepository;
 import com.strongloop.android.loopback.RestAdapter;
 
 import de.greenrobot.daoexample.FingerPrintRepository;
+import de.greenrobot.daoexample.Metadata;
 
 public class ServerSyncAdapter  implements Constants,IFingerPrintSync,ICommomSync{
 
@@ -20,6 +21,10 @@ public class ServerSyncAdapter  implements Constants,IFingerPrintSync,ICommomSyn
 	private IFingerPrintSync IFPSync;
 	private ICommomSync IComSync;
 	
+	public void initialSync(String tablename) {
+		IComSync.initialSync(tablename);
+	}
+
 	public void sendToServer(List<Long> ids, String tablename) {
 		IComSync.sendToServer(ids, tablename);
 	}
@@ -35,15 +40,15 @@ public class ServerSyncAdapter  implements Constants,IFingerPrintSync,ICommomSyn
 	 
 
 	public void sendFullFingerPrint(Long rowId, String fullfingerprint,
-			Double length) {
-		IFPSync.sendFullFingerPrint(rowId, fullfingerprint, length);
+			Double length, Metadata md) {
+		IFPSync.sendFullFingerPrint(rowId, fullfingerprint, length,md);
 	}
 	
 	public ServerSyncAdapter(Application app) {
 		this.app=app;
 		DBAdapter dbadapter=DBAdapter.getInstance(app);
 		restAdapter = ((MyApplication) app).getLoopBackAdapter();
-		IFPSync = new FingerPrintSync(restAdapter.createRepository(FingerPrintRepository.class));
+		IFPSync = new FingerPrintSync(restAdapter.createRepository(FingerPrintRepository.class),dbadapter);
 		IComSync = new CommonSync(restAdapter,dbadapter);
 	}
  

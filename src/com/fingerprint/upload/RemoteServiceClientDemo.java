@@ -133,8 +133,10 @@ public class RemoteServiceClientDemo extends Activity implements Constants{
     	if(conn == null) {
         	conn = new RemoteServiceConnection();
         	try{
-        		Intent i  = new Intent(getApplicationContext(),
-                        RemoteService.class);
+        		 Intent i  = new Intent(getApplicationContext(),
+                         RemoteService.class);
+        		 i.putExtra(JOB_TYPE, BACKGROUND_FINGERPRINT_JOB);
+        		 
         	System.out.println(bindService(i, conn, 0));
         	
         	updateServiceStatus();

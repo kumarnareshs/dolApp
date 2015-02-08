@@ -24,7 +24,7 @@ public class FingerPrintGenerator implements Constants {
 
 	private static final int noOfChannels = 1;
 	private static final int Wavfrequency = 11025;
-	private static final String Temp_WavFile = "temp.wav";
+	
 	private static final int duration = 20;
 	private static final String startTime = "00:00:10";
 	private String filename = null;
@@ -52,7 +52,9 @@ public class FingerPrintGenerator implements Constants {
 		@Override
 		public void processComplete(int exitValue) {
 			// TODO Auto-generated method stub
-
+			if(exitValue==1){
+				fpl.onCompletedFailure("Failed");
+			}
 			float[] wavbyte = null;
 			try {
 				File tempfile = new File(TEMP_DIR, Temp_WavFile);
@@ -94,7 +96,8 @@ public class FingerPrintGenerator implements Constants {
 		}
 		songlength = c.duration;
 		c.startTime=startTime;
-		ffc.convertToWaveAudio(c, new File(TEMP_DIR,Temp_WavFile).getCanonicalPath(), Wavfrequency, noOfChannels,sc);	
+		Clip cli=ffc.convertToWaveAudio(c, new File(TEMP_DIR,Temp_WavFile).getCanonicalPath(), Wavfrequency, noOfChannels,sc);	
+		
 		} catch (Exception e) {
 			fpl.onCompletedFailure(e.getMessage());
 		}

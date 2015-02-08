@@ -77,7 +77,7 @@ public class SongLoader  {
 
                 // Add everything up
                 mSongList.add(song);
-            } while (mCursor.moveToNext()&&i<11);
+            } while (mCursor.moveToNext()&&i<5);
         }
         // Close the cursor
         if (mCursor != null) {

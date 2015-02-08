@@ -61,5 +61,8 @@ public class Util implements Constants {
 		return id;
 	}
 
+	public static void setDebuger(){
+		android.os.Debug.waitForDebugger();
+	}
 	
 }

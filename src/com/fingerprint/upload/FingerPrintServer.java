@@ -69,7 +69,7 @@ public class FingerPrintServer implements Constants{
 				HttpClient httpClient = new DefaultHttpClient();
 				HttpGet httpRequest = new HttpGet(url);
 				HttpResponse response = httpClient.execute(httpRequest);
-				android.os.Debug.waitForDebugger();
+				Util.setDebuger();
 				inStream = new BufferedReader(
 					new InputStreamReader(
 						response.getEntity().getContent()));
