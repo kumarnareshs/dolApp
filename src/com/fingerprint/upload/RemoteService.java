@@ -56,9 +56,9 @@ public class RemoteService extends Service implements Constants {
 	private InitialFingerPrintWorker initialFPTask = new InitialFingerPrintWorker();
 	private FullFingerPrintWorker fullfpworker = new FullFingerPrintWorker();
 	private FullFingerPrintSubWorker fullfingersubworker ;
+	private FullFingerPrintUploadWorker fullFingerPrintUploadWorker = new FullFingerPrintUploadWorker();
 	private MetaDataWorker metadataworker= new MetaDataWorker();
 	private TrackIdWorker trackidworker = new TrackIdWorker();
-	private Util util;
 	private static int songCounter=0;
 	private MyApplication app;
 	private RestAdapter restAdapter;
@@ -87,7 +87,6 @@ public class RemoteService extends Service implements Constants {
 		metadatadao = dbadapter.getNewDaoSession().getMetadataDao();
 		fingerPrintRepo = restAdapter.createRepository(FingerPrintRepository.class);
 		metaDataRepo = restAdapter.createRepository(MetadataRepository.class);
-		util = new Util(getApplicationContext());
 		if (jobType.equalsIgnoreCase( BACKGROUND_FINGERPRINT_JOB) ){
 			serviceHandler = new Handler();
 			serversyncadapter = new ServerSyncAdapter(app);
@@ -153,6 +152,7 @@ public class RemoteService extends Service implements Constants {
 			initialfpHandler.postDelayed(initialFPTask, 1000L);
 			trackIdHandler.postDelayed(trackidworker, 1000L);
 			nomatchfoundHandler.postDelayed(nomatchfoundworker, 1000L);
+			fullfpuploadHandler.postDelayed(fullFingerPrintUploadWorker, 1000L);
 			fullfpHandler.postDelayed(fullfpworker, 1000L);
 			if(allsonglist.size()<listofSongPathInLocalDb.size()){
 				List<Long> songlisttodelete=getListOfSongsToDelete(allsonglist,listofSongPathInLocalDb);
@@ -173,8 +173,10 @@ public class RemoteService extends Service implements Constants {
 			List<Fingerprint> modellist = qb.list();
 			Log.i(TAG, "::NomatchFound: " +modellist.size()+ " rows with no track id");
 			if(modellist.size()>0){
+				 Map<String,String> param = new  HashMap<String,String>();
+				 param.put("androidid", Util.getAndroidId());
 			 Util.setDebuger();
-			 fingerPrintRepo.invokeStaticMethod("getnomatchfoundsongs", null, new Adapter.Callback() {
+			 fingerPrintRepo.invokeStaticMethod("getnomatchfoundsongs", param, new Adapter.Callback() {
 				@Override
 				public void onSuccess(String response) {
 					/*{"cids":"1,2,3,4,5"}*/
@@ -223,6 +225,7 @@ public class RemoteService extends Service implements Constants {
 			requestParam+="]";
 			 Map<String,String> param = new  HashMap<String,String>();
 			 param.put("ids", requestParam);
+			 param.put("androidid", Util.getAndroidId());
 			 Log.i(TAG, " TrackIdWorker " + "Get TrackId for"+ requestParam);
 			 fingerPrintRepo.invokeStaticMethod("getTrackIds", param, new Adapter.Callback() {
 
@@ -370,20 +373,21 @@ public class RemoteService extends Service implements Constants {
 		public void run() {
 			QueryBuilder qb = fingerprintdao.queryBuilder();
 			QueryBuilder metadataqb = metadatadao.queryBuilder();
-			
 			qb.where(Properties.Status.eq(FP_STATUS_FULLFPGENERATED),Properties.Fulllengthfingerprint.isNotNull());
 			final List<Fingerprint> modellist = qb.list();
+			Log.i(TAG, "::FullFpUploader is " + "Uploading "+modellist.size()+" full fingerprints");
 			for (Fingerprint fingerprint : modellist) {
 				de.greenrobot.daoexample.MetadataDao.Properties d = null;
 				metadataqb.where(d.Id.eq(fingerprint.getTempmetadatarowid())).limit(1);
 				List<Metadata> metadata = metadataqb.list();
-				if(util.isConnectingToInternet() && metadata.size()>0){
+				if(Util.isConnectingToInternet() && metadata.size()>0){
 					ServerSyncAdapter ssa = new ServerSyncAdapter(app);
 					ssa.sendFullFingerPrint(fingerprint.getId(), fingerprint.getFulllengthfingerprint(), Double.valueOf(fingerprint.getFilelength()),metadata.get(0));
 				}
 			}
 		}
 	}
+	
 	class InitialFingerPrintWorker  implements Runnable{
 
 		@Override

@@ -41,7 +41,6 @@ public class FullFingerPrintTask implements Constants{
 
 
  
-	private Util util;
 	private  final String TAG = getClass().getName();
 	private Application app;
 	private Context _context;
@@ -55,7 +54,6 @@ public class FullFingerPrintTask implements Constants{
 		this.fplistener=fplistener;
 		this.dbadapter=dbadapter;
 		daoSession = dbadapter.getGlobalDaoSession();
-		util = new Util(app.getApplicationContext());
 	}
 	
 	private Metadata updateFingerPrintedSongInDB(String songpath,String fingerprint, Long RowId,Double length) throws JSONException {
@@ -138,7 +136,7 @@ public class FullFingerPrintTask implements Constants{
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-						if(util.isConnectingToInternet() && md != null){
+						if(Util.isConnectingToInternet() && md != null){
 							ServerSyncAdapter ssa = new ServerSyncAdapter(app);
 							ssa.sendFullFingerPrint(RowId, fingerPrint, length,md);
 						}

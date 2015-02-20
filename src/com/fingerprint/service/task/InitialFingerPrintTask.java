@@ -23,7 +23,6 @@ import de.greenrobot.daoexample.FingerprintDao;
 public class InitialFingerPrintTask implements Constants{
 	
 	private DaoSession daoSession;
-	private Util util;
 	private  final String TAG = getClass().getName();
 	private Application app;
 	private DBAdapter dbadapter;
@@ -34,7 +33,6 @@ public class InitialFingerPrintTask implements Constants{
 		this.app = app;
 		this.fplistener = fplistener;
 		daoSession = dbadapter.getGlobalDaoSession();
-		util = new Util(app.getApplicationContext());
 	}
 	
 	private Long insertFingerPrintedSongInDB(Song FingerprintedSong ,String fingerprint) {
@@ -79,7 +77,7 @@ public class InitialFingerPrintTask implements Constants{
 						Long rowId=insertFingerPrintedSongInDB(songToFingerprint,fingerPrint);
 						
 						Log.i(TAG, "::Initial ::fingerprintMusic Success: Path "+songToFingerprint.mpath);
-						if(rowId!= null && util.isConnectingToInternet()){
+						if(rowId!= null && Util.isConnectingToInternet()){
 							//modify the song length and ingest to the FP Server Initally
 							//new FingerPrintServer().Ingest(fingerPrint,songToFingerprint.mSongName,RemoteService.this.getApplication());
 							//new FingerPrintServer().Query(fingerPrint,RemoteService.this.getApplication());

@@ -20,14 +20,12 @@ import de.greenrobot.daoexample.FingerprintDao;
 
 public class Util implements Constants {
 
-	private Context _context;
 
-	public Util(Context context) {
-		this._context = context;
+	private Util() {
 	}
 
-	public boolean isConnectingToInternet() {
-		ConnectivityManager connectivity = (ConnectivityManager) _context
+	public static boolean isConnectingToInternet() {
+		ConnectivityManager connectivity = (ConnectivityManager) MyApplication.getContext()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (connectivity != null) {
 			NetworkInfo[] info = connectivity.getAllNetworkInfo();
